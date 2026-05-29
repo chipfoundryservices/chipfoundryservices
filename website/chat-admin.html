@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Admin - Chip Foundry Services</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; height: 100vh; display: flex; }
+        
+        .sidebar { width: 350px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 1rem; background: #0066cc; color: white; font-weight: 600; font-size: 1.2rem; }
+        .session-list { flex: 1; overflow-y: auto; }
+        .session-item { padding: 1rem; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; gap: 1rem; }
+        .session-item:hover { background: #f8f9fa; }
+        .session-item.active { background: #e3f2fd; border-left: 3px solid #0066cc; }
+        .session-avatar { width: 45px; height: 45px; background: #0066cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .session-info { flex: 1; min-width: 0; }
+        .session-ip { font-weight: 600; color: #333; }
+        .session-preview { font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .session-meta { text-align: right; }
+        .session-time { font-size: 0.75rem; color: #999; }
+        .unread-count { background: #dc2626; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; font-weight: bold; margin-top: 0.25rem; display: inline-block; }
+        
+        .chat-area { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { padding: 1rem; background: white; border-bottom: 1px solid #ddd; font-weight: 600; }
+        .chat-header span { color: #666; font-weight: normal; font-size: 0.9rem; }
+        .messages { flex: 1; padding: 1rem; overflow-y: auto; background: #f8f9fa; }
+        .no-chat { display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 1.2rem; }
+        
+        .msg { margin-bottom: 1rem; max-width: 70%; }
+        .msg.user { margin-right: auto; }
+        .msg.support { margin-left: auto; }
+        .msg .bubble { padding: 0.75rem 1rem; border-radius: 12px; }
+        .msg.user .bubble { background: white; border: 1px solid #ddd; }
+        .msg.support .bubble { background: #0066cc; color: white; }
+        .msg .time { font-size: 0.7rem; color: #999; margin-top: 0.25rem; }
+        .msg.support .time { text-align: right; }
+        
+        .reply-area { padding: 1rem; background: white; border-top: 1px solid #ddd; display: flex; gap: 0.5rem; }
+        .reply-area input { flex: 1; padding: 0.75rem 1rem; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 1rem; }
+        .reply-area input:focus { border-color: #0066cc; }
+        .reply-area button { padding: 0.75rem 1.5rem; background: #0066cc; color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; }
+        .reply-area button:hover { background: #0052a3; }
+        .reply-area button:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">💬 Customer Chats</div>
+        <div class="session-list" id="session-list">
+            <div style="padding: 2rem; text-align: center; color: #999;">Loading...</div>
+        </div>
+    </div>
+    
+    <div class="chat-area">
+        <div class="chat-header" id="chat-header">Select a conversation</div>
+        <div class="messages" id="messages">
+            <div class="no-chat">Select a customer chat from the left</div>
+        </div>
+        <div class="reply-area">
+            <input type="text" id="reply-input" placeholder="Type your reply..." onkeypress="if(event.key==='Enter')sendReply()" disabled>
+            <button onclick="sendReply()" id="send-btn" disabled>Send</button>
+        </div>
+    </div>
+    
+    <script>
+        var currentSession = null;
+        
+        function loadSessions() {
+            fetch('/chat_api.php?action=sessions')
+                .then(r => r.json())
+                .then(data => {
+                    var list = document.getElementById('session-list');
+                    if (!data.sessions || data.sessions.length === 0) {
+                        list.innerHTML = '<div style="padding: 2rem; text-align: center; color: #999;">No active chats yet</div>';
+                        return;
+                    }
+                    list.innerHTML = data.sessions.map(s => {
+                        var time = new Date(s.last_activity).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        var initial = (s.ip_address || 'U')[0].toUpperCase();
+                        return '<div class="session-item ' + (currentSession === s.session_id ? 'active' : '') + '" onclick="selectSession(\'' + s.session_id + '\', \'' + s.ip_address + '\')">' +
+                            '<div class="session-avatar">' + initial + '</div>' +
+                            '<div class="session-info"><div class="session-ip">Visitor ' + (s.ip_address || 'Unknown') + '</div><div class="session-preview">' + (s.last_message || 'No messages') + '</div></div>' +
+                            '<div class="session-meta"><div class="session-time">' + time + '</div>' + (s.unread > 0 ? '<div class="unread-count">' + s.unread + '</div>' : '') + '</div></div>';
+                    }).join('');
+                });
+        }
+        
+        function selectSession(sessionId, ip) {
+            currentSession = sessionId;
+            document.getElementById('chat-header').innerHTML = 'Chat with <span>' + ip + '</span>';
+            document.getElementById('reply-input').disabled = false;
+            document.getElementById('send-btn').disabled = false;
+            loadMessages();
+            
+            // Mark as read
+            fetch('/chat_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'mark_read', session_id: sessionId })
+            });
+            
+            loadSessions();
+        }
+        
+        function loadMessages() {
+            if (!currentSession) return;
+            fetch('/chat_api.php?action=get&session_id=' + currentSession)
+                .then(r => r.json())
+                .then(data => {
+                    var messagesDiv = document.getElementById('messages');
+                    if (!data.messages || data.messages.length === 0) {
+                        messagesDiv.innerHTML = '<div class="no-chat">No messages yet</div>';
+                        return;
+                    }
+                    messagesDiv.innerHTML = data.messages.map(m => {
+                        var time = new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        return '<div class="msg ' + m.sender + '"><div class="bubble">' + m.message + '</div><div class="time">' + time + '</div></div>';
+                    }).join('');
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+        }
+        
+        function sendReply() {
+            var input = document.getElementById('reply-input');
+            var msg = input.value.trim();
+            if (!msg || !currentSession) return;
+            
+            input.value = '';
+            
+            fetch('/chat_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'send', session_id: currentSession, message: msg, sender: 'support' })
+            }).then(() => {
+                loadMessages();
+                loadSessions();
+            });
+        }
+        
+        // Initial load
+        loadSessions();
+        
+        // Poll for updates every 3 seconds
+        setInterval(() => {
+            loadSessions();
+            if (currentSession) loadMessages();
+        }, 3000);
+    </script>
+</body>
+</html>

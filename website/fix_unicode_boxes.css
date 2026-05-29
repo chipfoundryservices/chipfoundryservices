@@ -1,0 +1,20 @@
+/* Fix Unicode box-drawing characters in code blocks */
+pre code {
+    font-family: 'DejaVu Sans Mono', 'Courier New', 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: 0;
+}
+
+/* Ensure proper rendering of box-drawing characters */
+pre code, pre {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Force UTF-8 character set */
+pre, code {
+    unicode-bidi: normal;
+    direction: ltr;
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Chip Foundry Services</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff3cd; min-height: 100vh; padding: 2rem; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { text-align: center; color: #333; margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; }
+        
+        .section { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section-title { color: #333; margin-bottom: 1rem; text-align: center; }
+        
+        .amount-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 0.5rem; }
+        .amount-btn { padding: 1rem; border: 2px solid #ddd; background: white; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .amount-btn:hover { border-color: #0066cc; }
+        .amount-btn.selected { background: #0066cc; color: white; border-color: #0066cc; }
+        .amount-input { width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 1rem; margin-top: 0.5rem; }
+        
+        .freq-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+        .freq-btn { padding: 0.75rem; border: 2px solid #ddd; background: white; border-radius: 4px; font-weight: 600; cursor: pointer; }
+        .freq-btn.selected { background: #0066cc; color: white; border-color: #0066cc; }
+        .freq-note { text-align: center; color: #0066cc; margin-top: 0.5rem; font-style: italic; }
+        
+        .divider { display: flex; align-items: center; margin: 1rem 0; color: #999; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
+        .divider span { padding: 0 1rem; }
+        
+        .payment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+        .payment-btn { padding: 1rem; border: 2px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 600; text-decoration: none; color: #333; }
+        .payment-btn:hover { border-color: #0066cc; background: #f0f7ff; }
+        .payment-btn.selected { border-color: #0066cc; border-width: 3px; }
+        
+        .fee-checkbox { display: flex; align-items: flex-start; gap: 0.5rem; margin: 1rem 0; }
+        .fee-checkbox input { margin-top: 0.25rem; width: 20px; height: 20px; }
+        .fee-checkbox label { color: #333; }
+        
+        .donate-btn { width: 100%; padding: 1.25rem; background: #0066cc; color: white; border: none; border-radius: 4px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .donate-btn:hover { background: #0052a3; }
+        
+        .thank-you { background: #ffe4e6; color: #dc2626; padding: 1rem; border-radius: 25px; text-align: center; margin-top: 1rem; font-weight: 500; }
+        
+        .back-link { text-align: center; margin-top: 1rem; }
+        .back-link a { color: #0066cc; text-decoration: none; }
+        
+        .coming-soon { color: #999; font-size: 0.8rem; text-align: center; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Support Chip Foundry Services</h1>
+        <p class="subtitle">Please select an amount (USD). The average donation is around $13.</p>
+        
+        <div class="section">
+            <div class="amount-grid">
+                <button class="amount-btn selected" onclick="selectAmount(this, 2.75)">$2.75</button>
+                <button class="amount-btn" onclick="selectAmount(this, 15)">$15</button>
+                <button class="amount-btn" onclick="selectAmount(this, 25)">$25</button>
+                <button class="amount-btn" onclick="selectAmount(this, 50)">$50</button>
+                <button class="amount-btn" onclick="selectAmount(this, 100)">$100</button>
+                <button class="amount-btn" onclick="selectAmount(this, 250)">$250</button>
+                <button class="amount-btn" onclick="selectAmount(this, 500)">$500</button>
+                <button class="amount-btn" onclick="document.getElementById('custom-amount').focus()">Other</button>
+            </div>
+            <input type="number" id="custom-amount" class="amount-input" placeholder="Other amount ($)" onchange="selectCustomAmount(this)">
+        </div>
+        
+        <div class="section">
+            <p class="section-title">How often would you like to donate?</p>
+            <div class="freq-grid">
+                <button class="freq-btn selected" onclick="selectFreq(this, 'once')">Once</button>
+                <button class="freq-btn" onclick="selectFreq(this, 'monthly')">Monthly</button>
+                <button class="freq-btn" onclick="selectFreq(this, 'annual')">Annual</button>
+            </div>
+            <p class="freq-note">Support Chip Foundry Services year-round</p>
+        </div>
+        
+        <div class="section">
+            <p class="section-title">Please select a payment method</p>
+            
+            <div class="payment-grid">
+                <button class="payment-btn" onclick="selectPayment(this, 'card')" style="grid-column: span 2;">
+                    <span style="color:#1a1f71;font-weight:bold;">VISA</span>&nbsp;
+                    <span style="color:#eb001b;font-weight:bold;">Master</span><span style="color:#f79e1b;font-weight:bold;">card</span>&nbsp;
+                    <span style="color:#006fcf;font-weight:bold;">AMEX</span>&nbsp;
+                    <span style="color:#ff6000;font-weight:bold;">DISCOVER</span>
+                </button>
+                <button class="payment-btn" onclick="selectPayment(this, 'paypal')" style="color: #003087; font-weight: bold;">PayPal</button>
+                <button class="payment-btn" onclick="selectPayment(this, 'venmo')" style="color: #008CFF; font-weight: bold;">venmo</button>
+                <button class="payment-btn selected" onclick="selectPayment(this, 'applepay')" style="background: #000; color: white;"> Pay</button>
+                <button class="payment-btn" onclick="selectPayment(this, 'googlepay')"><span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc05;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span> Pay</button>
+            </div>
+            
+            <div class="fee-checkbox">
+                <input type="checkbox" id="cover-fee" onchange="updateButton()">
+                <label for="cover-fee">I'll generously add $0.35 to cover the transaction fees so you can keep 100% of my donation.</label>
+            </div>
+            
+            <button class="donate-btn" onclick="processDonation()">Donate $2.75 one time</button>
+            
+            <div class="thank-you">Thank you for joining the 2% of readers who give.</div>
+            
+            <p class="coming-soon">Payment processing coming soon. Thank you for your interest!</p>
+        </div>
+        
+        <div class="back-link">
+            <a href="/">← Back to Chip Foundry Services</a>
+        </div>
+    </div>
+    
+    <script>
+        var selectedAmount = 2.75;
+        var selectedFreq = 'once';
+        var selectedPayment = 'applepay';
+        
+        function selectAmount(btn, amount) {
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedAmount = amount;
+            document.getElementById('custom-amount').value = '';
+            updateButton();
+        }
+        
+        function selectCustomAmount(input) {
+            if (input.value) {
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+                selectedAmount = parseFloat(input.value);
+                updateButton();
+            }
+        }
+        
+        function selectFreq(btn, freq) {
+            document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedFreq = freq;
+            updateButton();
+        }
+        
+        function selectPayment(btn, payment) {
+            document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedPayment = payment;
+        }
+        
+        function updateButton() {
+            var amount = selectedAmount;
+            if (document.getElementById('cover-fee').checked) {
+                amount += 0.35;
+            }
+            var freqText = selectedFreq === 'once' ? 'one time' : (selectedFreq === 'monthly' ? 'monthly' : 'annually');
+            document.querySelector('.donate-btn').textContent = 'Donate $' + amount.toFixed(2) + ' ' + freqText;
+        }
+        
+        function processDonation() {
+            // Send notification
+            fetch('/donate.php', { method: 'POST' }).catch(function(){});
+            alert('Thank you for your interest in donating! Payment processing will be available soon. Please contact support@chipfoundryservices.com for donation options.');
+        }
+    </script>
+</body>
+</html>

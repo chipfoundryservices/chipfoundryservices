@@ -1,0 +1,3856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChipFoundryServices — Semiconductor & AI Knowledge Platform</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="timestamp" content="1768881145">
+    <script>
+        // Force cache invalidation
+        if ('caches' in window) {
+            caches.keys().then(names => names.forEach(name => caches.delete(name)));
+        }
+        localStorage.removeItem('responseCache');
+        sessionStorage.clear();
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d0d0d;
+            color: #ececec;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 40px;
+        }
+        
+        /* Header */
+        .header {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d2d2d;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header a, .header-link {
+            color: #ececec;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .header a:hover, .header-link:hover { opacity: 0.7; }
+        
+        .apps-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #4d4d4d;
+            border-radius: 50%;
+            background: transparent;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+        }
+        
+        .apps-btn:hover { border-color: #888; }
+        
+        /* Main content */
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .container.has-results {
+            justify-content: flex-start;
+            padding: 20px;
+        }
+        
+        .main-heading {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .main-heading.hidden {
+            display: none;
+        }
+        
+        .search-wrapper {
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .search-wrapper.bottom {
+            margin-top: 120px;
+            margin-bottom: 40px;
+        }
+        
+        .search-bar {
+            background: #1a1a1a;
+            border: 1px solid #4d4d4d;
+            border-radius: 28px;
+            padding: 18px 20px 36px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            min-height: 126px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            overflow: visible;
+        }
+        
+        .search-bar-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-bar:hover { border-color: #666; }
+        .search-bar:focus-within { border-color: #888; box-shadow: 0 0 0 1px #888; }
+        
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            color: #ececec;
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .search-input::placeholder { color: #888; }
+
+        .search-bar-spacer {
+            height: 20px;
+        }
+        
+        .search-controls {
+            position: absolute;
+            right: 16px;
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 2;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 0;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            border-radius: 8px;
+        }
+        
+        .icon-btn:hover { opacity: 0.7; }
+        
+        .mic-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 0;
+            border-radius: 50%;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s, transform 0.12s ease;
+        }
+        .mic-btn:hover {
+            background: #3f3f3f;
+            transform: scale(1.02);
+        }
+        .mic-btn::after {
+            content: 'Dictate';
+            position: absolute;
+            top: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            font-size: 12px;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            white-space: nowrap;
+            display: none;
+            z-index: 10;
+        }
+        .mic-btn:hover::after { display: block; }
+        
+        .voice-btn {
+            width: 40px;
+            height: 40px;
+            background: #ffffff;
+            border: 0;
+            border-radius: 50%;
+            color: #0d0d0d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            transition: transform 0.12s ease;
+        }
+        .voice-btn:hover { transform: scale(1.03); }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: #ffffff;
+            border: 0;
+            border-radius: 50%;
+            color: #0d0d0d;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            transition: transform 0.12s ease;
+        }
+        .send-btn:hover { transform: scale(1.03); }
+        
+        .search-bar-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 4px;
+            font-size: 14px;
+            color: #888;
+            position: relative;
+        }
+        
+        .plus-btn {
+            width: 28px;
+            height: 28px;
+            background: transparent;
+            border: 1px solid #4d4d4d;
+            border-radius: 6px;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: border-color 0.2s, background 0.2s;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .plus-btn:hover { 
+            border-color: #666; 
+            background: #3f3f3f;
+        }
+        
+        /* Plus dropdown - appears above the + button vertically */
+        .plus-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: #2a2a2a;
+            border: 1px solid #4d4d4d;
+            border-radius: 12px;
+            min-width: 280px;
+            margin-bottom: 8px;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            padding: 8px;
+            flex-direction: column;
+            /* Enable smooth transforms for touch gestures */
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            /* Ensure hardware acceleration and unified rendering */
+            transform: translateZ(0);
+            isolation: isolate;
+        }
+        
+        .plus-dropdown.show {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plus-option {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #ececec;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            border-radius: 8px;
+            position: relative;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+        
+        .plus-option:hover {
+            background: #3a4248;
+        }
+        
+        .plus-option-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .plus-option-text {
+            flex: 1;
+        }
+        
+        .plus-option-arrow {
+            margin-left: auto;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* More submenu - positioned directly next to the first dropdown */
+        .more-submenu {
+            display: none;
+            position: fixed;
+            background: #2a2a2a;
+            border: 1px solid #4d4d4d;
+            border-radius: 12px;
+            min-width: 280px;
+            z-index: 1001;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            padding: 8px;
+            flex-direction: column;
+            /* Enable smooth transforms for touch gestures */
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            /* Ensure hardware acceleration and unified rendering */
+            transform: translateZ(0);
+            isolation: isolate;
+        }
+        
+        .more-submenu.show {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plus-separator {
+            height: 1px;
+            background: #4d4d4d;
+            margin: 4px 0;
+        }
+        
+        .mode-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            color: #6eb8d8;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        
+        .mode-selector:hover { background: #3f3f3f; border-color: #4d4d4d; }
+        
+        .mode-selector.active {
+            background: #3f3f3f;
+            border-color: #4d4d4d;
+        }
+        
+        .mode-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #262d33;
+            border: 1px solid #4d4d4d;
+            border-radius: 12px;
+            min-width: 220px;
+            margin-top: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .mode-dropdown.show {
+            display: block;
+        }
+        
+        .mode-dropdown-header {
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #888;
+            border-bottom: 1px solid #4d4d4d;
+            font-weight: 500;
+        }
+        
+        .mode-option {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #ececec;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .mode-option:hover {
+            background: #3a4248;
+        }
+        
+        .mode-option.selected {
+            color: #10a37f;
+        }
+        
+        .mode-option[data-mode="standard"].selected {
+            color: white;
+        }
+        
+        .mode-option-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .mode-option-check {
+            margin-left: auto;
+            color: #10a37f;
+            font-size: 12px;
+        }
+        
+        .mode-icon {
+            width: 16px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .results {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            display: none;
+            flex: 1;
+            margin-bottom: 60px;
+        }
+        
+        .results.show { 
+            display: block; 
+        }
+        
+        .message {
+            margin-bottom: 24px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        
+        .message.user {
+            background: transparent;
+            color: #ececec;
+            text-align: right;
+            margin-left: auto;
+            max-width: 80%;
+        }
+        
+        .message.assistant {
+            background: #1a1a1a;
+            color: #d1d5db;
+            max-width: 100%;
+        }
+        
+        .message code {
+            background: #0d0d0d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .message pre {
+            background: #1a1a1a;
+            padding: 14px 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border: 1px solid #2a2a2a;
+        }
+        
+        .message pre code {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: #f0f0f0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        /* Math formula display styling */
+        .math-block {
+            background: #1a1a1a;
+            padding: 20px 20px;  /* Reduced from 40px 30px - Python-style */
+            margin: 20px 0;
+            border-radius: 0;
+            font-size: 28px;
+            color: #ffffff;
+            line-height: 1.8;
+            overflow-x: auto;
+            overflow-y: visible;
+            text-align: left;  /* Changed from center to left - Python-style */
+            /* Remove default margins to allow content-level to control positioning */
+            margin-left: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+            display: block;
+        }
+        
+        /* Math blocks with content-level classes get proper indentation */
+        .message .math-block.content-level-1 {
+            margin-left: 20px;
+        }
+        
+        .message .math-block.content-level-2 {
+            margin-left: 40px;
+        }
+        
+        .message .math-block.content-level-3 {
+            margin-left: 60px;
+        }
+        
+        .message .math-block.content-level-4 {
+            margin-left: 80px;
+        }
+        
+        .math-block .katex {
+            color: #ffffff !important;
+            font-size: 1em;
+            max-width: 100% !important;
+        }
+        
+        .math-block .katex-html {
+            overflow-x: visible !important;
+            overflow-y: visible !important;
+        }
+        
+        .math-block .katex-display {
+            margin: 0;
+            text-align: left !important;  /* Force left-align, override KaTeX default */
+        }
+        
+        .math-block .katex-display > .katex {
+            text-align: left !important;  /* Force left-align on KaTeX element */
+        }
+        
+        .message table {
+            width: 82%;
+            max-width: 900px;
+            border-collapse: collapse;
+            margin: 18px auto;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .message table thead {
+            background: #1a1a1a;
+            border-bottom: 1px solid #555;
+        }
+        
+        .message table th,
+        .message table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+            font-size: 14px;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+        
+        .message table th {
+            font-weight: 600;
+            color: #e0e0e0;
+            padding-bottom: 15px;
+        }
+        
+        .message table td {
+            color: #d1d5db;
+        }
+        
+        .message table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .message table tbody tr:nth-child(even) {
+            background: #101010;
+        }
+        
+        .message ul {
+            margin: 24px 0;
+            padding-left: 32px;
+            list-style-type: disc;
+        }
+        
+        .message li {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+        
+        /* Lists within hierarchical content - align with paragraphs */
+        .message .content-level-1 ul,
+        .message .content-level-2 ul,
+        .message .content-level-3 ul {
+            padding-left: 20px;  /* Minimal padding for bullet marker */
+            margin-left: 0;
+        }
+
+        /* List items align with parent content level */
+        .message .content-level-1 li,
+        .message .content-level-2 li,
+        .message .content-level-3 li {
+            margin-left: 0;
+        }
+        
+        .message p {
+            margin: 24px 0;
+        }
+        
+        /* Hierarchical indentation for improved readability */
+        .message h1 {
+            margin-left: 0;
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .message h2 {
+            margin-left: 20px;
+            margin-top: 28px;
+            margin-bottom: 14px;
+        }
+        
+        .message h3 {
+            margin-left: 60px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .message h4 {
+            margin-left: 100px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .message h5 {
+            margin-left: 140px;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+        
+        /* Content indentation - content is indented MORE than its parent header */
+        /* H1=0px, H2=20px, H3=60px, H4=100px, H5=140px */
+        /* Content under each header gets +20px more than header */
+        .message .content-level-0 {
+            margin-left: 20px;  /* Content under H1 (H1=0px, content=20px) */
+        }
+
+        .message .content-level-1 {
+            margin-left: 40px;  /* Content under H2 (H2=20px, content=40px) */
+        }
+
+        .message .content-level-2 {
+            margin-left: 80px;  /* Content under H3 (H3=60px, content=80px) */
+        }
+
+        .message .content-level-3 {
+            margin-left: 120px;  /* Content under H4 (H4=100px, content=120px) */
+        }
+
+        .message .content-level-4 {
+            margin-left: 160px;  /* Content under H5 (H5=140px, content=160px) */
+        }
+        
+        /* Ensure math blocks and tables respect indentation */
+        .message .content-level-1 .math-block,
+        .message .content-level-1 table {
+            margin-left: 0;
+        }
+        
+        .message .content-level-2 .math-block,
+        .message .content-level-2 table {
+            margin-left: 0;
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 12px;
+            margin-bottom: 24px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+            margin-left: 0;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.8);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Typewriter effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid transparent;
+        }
+        
+        .typewriter.typing {
+            border-right-color: #ffffff;
+            animation: cursor-blink 1s infinite;
+        }
+        
+        @keyframes cursor-blink {
+            0%, 50% {
+                border-right-color: #ffffff;
+            }
+            51%, 100% {
+                border-right-color: transparent;
+            }
+        }
+        
+        /* Footer */
+        footer {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #2d2d2d;
+        }
+        
+        .footer-left, .footer-right {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-center {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #10a37f;
+        }
+        
+        footer a { color: #888; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    
+/* User Profile */
+.user-profile-btn { display: flex; align-items: center; gap: 8px; background: transparent; border: 1px solid #4d4d4d; border-radius: 24px; padding: 4px 12px 4px 4px; cursor: pointer; color: #ececec; position: relative; }
+.user-profile-btn:hover { background: #2a2a2a; }
+.user-avatar { width: 32px; height: 32px; background: #7b1fa2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 500; }
+.user-email-short { font-size: 14px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+.user-menu { display: none; position: absolute; top: 50px; right: 0; background: #1a1a1a; border: 1px solid #4d4d4d; border-radius: 12px; min-width: 280px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; }
+.user-menu.show { display: block; }
+.user-menu-header { padding: 16px; display: flex; gap: 12px; }
+.user-avatar-large { width: 48px; height: 48px; background: #7b1fa2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 500; }
+.user-info { flex: 1; min-width: 0; }
+.user-email-full { color: #ececec; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+.user-id-badge { color: #888; font-size: 12px; margin-top: 4px; }
+.user-menu-divider { height: 1px; background: #4d4d4d; margin: 8px 0; }
+.user-menu-item { width: 100%; padding: 12px 16px; background: transparent; border: none; color: #ececec; font-size: 14px; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+.user-menu-item:hover { background: #2a2a2a; }
+
+/* Auth Modal */
+.auth-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+.auth-modal.show { display: flex; }
+.auth-box { background: #1a1a1a; border: 1px solid #4d4d4d; border-radius: 16px; padding: 40px; width: 90%; max-width: 400px; position: relative; }
+.auth-close { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: #888; font-size: 24px; cursor: pointer; }
+.auth-close:hover { color: #ececec; }
+.auth-title { font-size: 24px; font-weight: 500; color: #ececec; margin-bottom: 24px; text-align: center; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-input { background: #2a2a2a; border: 1px solid #4d4d4d; border-radius: 8px; padding: 12px 16px; color: #ececec; font-size: 14px; }
+.auth-input:focus { border-color: #888; outline: none; }
+.auth-submit { background: #ececec; color: #1a1a1a; border: none; border-radius: 8px; padding: 12px; font-size: 16px; font-weight: 500; cursor: pointer; }
+.auth-submit:hover { background: #fff; }
+.auth-switch { text-align: center; margin-top: 16px; color: #888; font-size: 14px; }
+.auth-switch a { color: #ececec; cursor: pointer; }
+.auth-error { color: #ff6b6b; font-size: 14px; text-align: center; display: none; }
+.auth-error.show { display: block; }
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/chat/">💬 CFSGPT</a>
+            <a href="/app/">📱 App</a>
+            <a href="#about">About</a>
+            <a href="#store">Store</a>
+        </div>
+        <div class="header-right">
+            <a href="#email">Email</a>
+            <a href="#images">Images</a>
+            <button class="apps-btn" title="Apps">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="4" cy="4" r="2"/>
+                    <circle cx="12" cy="4" r="2"/>
+                    <circle cx="20" cy="4" r="2"/>
+                    <circle cx="4" cy="12" r="2"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <circle cx="20" cy="12" r="2"/>
+                    <circle cx="4" cy="20" r="2"/>
+                    <circle cx="12" cy="20" r="2"/>
+                    <circle cx="20" cy="20" r="2"/>
+                </svg>
+            </button>
+            <div id="userProfile" style="display: none;">
+                <button class="user-profile-btn" onclick="toggleUserMenu()">
+                    <div class="user-avatar">M</div>
+                    <span class="user-email-short"></span>
+                </button>
+                <div class="user-menu" id="userMenu">
+                    <div class="user-menu-header">
+                        <div class="user-avatar-large">M</div>
+                        <div class="user-info">
+                            <div class="user-email-full"></div>
+                            <div class="user-id-badge">User #<span id="userIdDisplay"></span></div>
+                        </div>
+                    </div>
+                    <div class="user-menu-divider"></div>
+                    <button class="user-menu-item" onclick="showProfile()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        My Profile
+                    </button>
+                    <button class="user-menu-item" onclick="signOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+            <button class="sign-in-btn" onclick="showSignIn()" id="signInBtn">Sign in</button>
+            <button class="sign-up-btn" onclick="showSignUp()" id="signUpBtn">Sign up</button>
+        </div>
+    </header>
+<!-- User Counter Widget (Top Right) -->
+<div class="user-counter-widget" id="userCounterWidget">
+    <div class="counter-display" onclick="toggleCounterDetails()">
+        <div class="counter-icon">👥</div>
+        <div class="counter-text">
+            <div class="counter-number" id="counterNumber">0</div>
+            <div class="counter-label">/ 100 users</div>
+        </div>
+        <div class="admin-badge" id="adminBadge" style="display: none;">👑</div>
+    </div>
+    
+    <div class="counter-details" id="counterDetails">
+        <div class="counter-header">
+            <div class="counter-title">Community Growth</div>
+            <div class="counter-close" onclick="toggleCounterDetails()">×</div>
+        </div>
+        
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="milestone-message" id="milestoneMessage">🌱 Building your community...</div>
+        
+        <div class="counter-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="statToday">0</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statWeek">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statActive">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+        </div>
+        
+        <div class="counter-footer">
+            <div class="remaining-text" id="remainingText">96 more users until AI upgrade!</div>
+        </div>
+    </div>
+</div>
+
+<!-- Smart Greeting Banner -->
+<div class="greeting-banner" id="greetingBanner" style="display: none;">
+    <div class="greeting-content">
+        <div class="greeting-badge" id="greetingBadge">🏆 Founder</div>
+        <div class="greeting-text">
+            <div class="greeting-title" id="greetingTitle">Welcome back, Founder!</div>
+            <div class="greeting-message" id="greetingMessage">You're User #1 - the pioneer!</div>
+        </div>
+        <button class="greeting-close" onclick="closeGreeting()">×</button>
+    </div>
+</div>
+
+<style>
+/* User Counter Widget */
+.user-counter-widget {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 500;
+}
+
+.counter-display {
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.counter-display:hover {
+    background: #2a2a2a;
+    border-color: #666;
+    transform: translateY(-2px);
+}
+
+.counter-icon {
+    font-size: 24px;
+}
+
+.counter-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.counter-number {
+    color: #7b1fa2;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+
+.admin-badge {
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+.counter-label {
+    color: #888;
+    font-size: 11px;
+}
+
+.counter-details {
+    display: none;
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.counter-details.show {
+    display: block;
+}
+
+.counter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #4d4d4d;
+}
+
+.counter-title {
+    color: #ececec;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.counter-close {
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.counter-close:hover {
+    color: #ececec;
+}
+
+.progress-bar-container {
+    position: relative;
+    height: 32px;
+    background: #2a2a2a;
+    margin: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7b1fa2, #9c27b0);
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ececec;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.milestone-message {
+    text-align: center;
+    padding: 12px 16px;
+    color: #ececec;
+    font-size: 14px;
+    background: rgba(123, 31, 162, 0.1);
+    margin: 0 16px 16px;
+    border-radius: 8px;
+}
+
+.counter-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 0 16px 16px;
+}
+
+.stat-item {
+    text-align: center;
+    background: #2a2a2a;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.stat-value {
+    color: #7b1fa2;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.stat-label {
+    color: #888;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.counter-footer {
+    padding: 12px 16px;
+    border-top: 1px solid #4d4d4d;
+}
+
+.remaining-text {
+    color: #888;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Greeting Banner */
+.greeting-banner {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1500;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.greeting-content {
+    background: linear-gradient(135deg, #1a1a1a, #2a1a2a);
+    border: 1px solid #7b1fa2;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+    min-width: 400px;
+}
+
+.greeting-badge {
+    background: #7b1fa2;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.greeting-text {
+    flex: 1;
+}
+
+.greeting-title {
+    color: #ececec;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.greeting-message {
+    color: #888;
+    font-size: 13px;
+}
+
+.greeting-close {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.greeting-close:hover {
+    color: #ececec;
+}
+
+@media (max-width: 640px) {
+    .user-counter-widget {
+        top: 70px;
+        right: 16px;
+    }
+    
+    .counter-details {
+        width: 280px;
+    }
+    
+    .greeting-content {
+        min-width: 300px;
+        padding: 12px 16px;
+    }
+}
+</style>
+
+<script>
+let counterUpdateInterval = null;
+
+// Toggle counter details
+function toggleCounterDetails() {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    // Whitelist: Only these users can see details
+    const allowedUsers = ['1', '2', '3', '4'];
+    const allowedEmails = [
+        'michaelqiao59@gmail.com',
+        'michaelqiao2022@gmail.com', 
+        'michaelqiao3@gmail.com',
+        'yantaoqiao528@gmail.com'
+    ];
+    
+    if (!allowedUsers.includes(userId) && !allowedEmails.includes(userEmail)) {
+        return; // Silently do nothing for non-whitelisted users
+    }
+    
+    const details = document.getElementById('counterDetails');
+    details.classList.toggle('show');
+}
+
+// Close greeting banner
+function closeGreeting() {
+    const banner = document.getElementById('greetingBanner');
+    banner.style.display = 'none';
+    localStorage.setItem('greeting_shown_' + new Date().toDateString(), 'true');
+}
+
+// Update user counter
+async function updateUserCounter() {
+    try {
+        const response = await fetch('smart_greeting.php?action=get_stats');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('counterNumber').textContent = data.total_users;
+            document.getElementById('progressBar').style.width = data.progress + '%';
+            document.getElementById('progressText').textContent = data.progress + '%';
+            document.getElementById('milestoneMessage').textContent = data.milestone_message;
+            document.getElementById('statToday').textContent = data.users_today;
+            document.getElementById('statWeek').textContent = data.users_week;
+            document.getElementById('statActive').textContent = data.active_users;
+            document.getElementById('remainingText').textContent = 
+                data.remaining > 0 ? 
+                data.remaining + ' more users until AI upgrade!' : 
+                '🎉 Ready for AI upgrade!';
+        }
+    } catch (err) {
+        console.error('Failed to update counter:', err);
+    }
+}
+
+// Show personalized greeting
+async function showPersonalizedGreeting() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+    
+    // Check if greeting already shown today
+    const greetingKey = 'greeting_shown_' + new Date().toDateString();
+    if (localStorage.getItem(greetingKey)) return;
+    
+    try {
+        const response = await fetch(`smart_greeting.php?action=get_greeting&user_id=${userId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('greetingBadge').textContent = data.badge;
+            document.getElementById('greetingTitle').textContent = data.greeting;
+            document.getElementById('greetingMessage').textContent = data.message;
+            document.getElementById('greetingBanner').style.display = 'block';
+            
+            // Auto-hide after 8 seconds
+            setTimeout(() => {
+                closeGreeting();
+            }, 8000);
+        }
+    } catch (err) {
+        console.error('Failed to load greeting:', err);
+    }
+}
+
+
+// Show admin badge for whitelisted users
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        const userId = localStorage.getItem('userId');
+        const userEmail = localStorage.getItem('userEmail');
+        const allowedUsers = ['1', '2', '3', '4'];
+        const allowedEmails = [
+            'michaelqiao59@gmail.com',
+            'michaelqiao2022@gmail.com',
+            'michaelqiao3@gmail.com', 
+            'yantaoqiao528@gmail.com'
+        ];
+        
+        if (allowedUsers.includes(userId) || allowedEmails.includes(userEmail)) {
+            const badge = document.getElementById('adminBadge');
+            if (badge) badge.style.display = 'block';
+        }
+    }, 500);
+});
+
+
+// Hide counter widget for non-whitelisted users
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        const userId = localStorage.getItem('userId');
+        const userEmail = localStorage.getItem('userEmail');
+        const allowedUsers = ['1', '2', '3', '4'];
+        const allowedEmails = [
+            'michaelqiao59@gmail.com',
+            'michaelqiao2022@gmail.com',
+            'michaelqiao3@gmail.com',
+            'yantaoqiao528@gmail.com'
+        ];
+        
+        const widget = document.getElementById('userCounterWidget');
+        if (widget) {
+            if (!userId || (!allowedUsers.includes(userId) && !allowedEmails.includes(userEmail))) {
+                widget.style.display = 'none';
+            }
+        }
+    }, 500);
+});
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', function() {
+    // Update counter immediately
+    updateUserCounter();
+    
+    // Update counter every 30 seconds
+    counterUpdateInterval = setInterval(updateUserCounter, 30000);
+    
+    // Show greeting if user is logged in
+    setTimeout(() => {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            showPersonalizedGreeting();
+        }
+    }, 1000);
+});
+</script>
+
+    
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <h1 class="main-heading" id="mainHeading">What can I help with?</h1>
+        
+        <!-- Results -->
+        <div class="results" id="results"></div>
+        
+        <div class="search-wrapper" id="searchWrapper">
+            <div class="search-bar">
+                <div class="search-bar-input-row">
+                    <input type="text" class="search-input" id="question" placeholder="Ask anything" onkeypress="if(event.key==='Enter')ask()">
+                    <div class="search-controls">
+                        <button class="mic-btn" title="Voice" onclick="alert('Voice feature coming soon')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                                <line x1="12" y1="19" x2="12" y2="22"/>
+                                <line x1="8" y1="22" x2="16" y2="22"/>
+                            </svg>
+                        </button>
+                        <button class="voice-btn" title="Record/Send" onclick="alert('Voice send coming soon')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <rect x="5" y="9" width="2.5" height="6" rx="1.25"/>
+                                <rect x="9.5" y="5" width="2.5" height="14" rx="1.25"/>
+                                <rect x="14" y="8" width="2.5" height="8" rx="1.25"/>
+                                <rect x="18.5" y="10" width="2.5" height="4" rx="1.25"/>
+                            </svg>
+                        </button>
+                        <button id="sendBtn" class="send-btn" title="Send" onclick="ask()" aria-label="Send">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 5l-5 5h3v6h4v-6h3z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="search-bar-spacer"></div>
+                
+                <div class="search-bar-controls">
+                    <button class="plus-btn" id="plusBtn" onclick="togglePlusDropdown(event)">
+                        +
+                    </button>
+                    
+                    <div class="mode-selector" id="modeSelector" onclick="toggleModeDropdown(event)">
+                        <svg class="mode-icon" width="16" height="24" viewBox="0 -8 24 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Light blue bar OUTSIDE the clock with proper gap and longer length -->
+                            <rect x="9" y="-3" width="6" height="2" fill="currentColor" rx="1"/>
+                            <!-- Full light blue circle border -->
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <!-- Clock hands pointing to 4 o'clock -->
+                            <line x1="12" y1="12" x2="12" y2="8" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="12" x2="16" y2="14" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>Thinking</span>
+                        <span>▼</span>
+                        
+                        <div class="mode-dropdown" id="modeDropdown">
+                            <div class="mode-dropdown-header">Thinking time</div>
+                            <button class="mode-option selected" data-mode="standard" onclick="selectMode('standard', event)">
+                                <span class="mode-option-icon">
+                                    <svg width="16" height="24" viewBox="0 -8 24 40" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- WHITE bar OUTSIDE the clock with proper gap -->
+                                        <rect x="9" y="-3" width="6" height="2" fill="white" rx="1"/>
+                                        <!-- Clock frame - white border from 12 to 4 o'clock (exactly to 4) -->
+                                        <path d="M 12 2 A 10 10 0 0 1 19.31 16.69" stroke="white" stroke-width="2" fill="none"/>
+                                        <!-- Clock hands pointing to 4 o'clock in WHITE -->
+                                        <line x1="12" y1="12" x2="12" y2="8" stroke="white" stroke-width="2"/>
+                                        <line x1="12" y1="12" x2="16" y2="14" stroke="white" stroke-width="2"/>
+                                    </svg>
+                                </span>
+                                <span>Standard</span>
+                                <span class="mode-option-check">✓</span>
+                            </button>
+                            <button class="mode-option" data-mode="extended" onclick="selectMode('extended', event)">
+                                <span class="mode-option-icon">
+                                    <svg width="16" height="24" viewBox="0 -8 24 40" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- Light blue bar OUTSIDE the clock with proper gap -->
+                                        <rect x="9" y="-3" width="6" height="2" fill="currentColor" rx="1"/>
+                                        <!-- Clock frame - white border from 12 to 9 o'clock (exactly to 9) -->
+                                        <path d="M 12 2 A 10 10 0 0 1 22 12 A 10 10 0 0 1 12 22 A 10 10 0 0 1 2 12" stroke="white" stroke-width="2" fill="none"/>
+                                        <!-- Clock hands pointing to 9 o'clock in WHITE -->
+                                        <line x1="12" y1="12" x2="12" y2="8" stroke="white" stroke-width="2"/>
+                                        <line x1="12" y1="12" x2="6" y2="12" stroke="white" stroke-width="2"/>
+                                    </svg>
+                                </span>
+                                <span>Extended</span>
+                                <span class="mode-option-check" style="display: none">✓</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="plus-dropdown" id="plusDropdown">
+                        <button class="plus-option" onclick="selectPlusOption('photos', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Add photos & files</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('image', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Create image</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('research', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"/>
+                                    <path d="M4 4h16v16H4z"/>
+                                    <path d="m8 8 8 8"/>
+                                    <path d="m16 8-8 8"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Deep research</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('shopping', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Shopping research</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('agent', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 8V4H8"/>
+                                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                                    <path d="M2 14h2"/>
+                                    <path d="M20 14h2"/>
+                                    <path d="M15 13v2"/>
+                                    <path d="M9 13v2"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Agent mode</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('more', event)" onmouseenter="showMoreSubmenu()" onmouseleave="hideMoreSubmenu()">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">More</span>
+                            <span class="plus-option-arrow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <!-- Second dropdown - More submenu -->
+                    <div class="more-submenu" id="moreSubmenu" onmouseenter="showMoreSubmenu()" onmouseleave="hideMoreSubmenu()">
+                        <button class="plus-option" onclick="selectPlusOption('sources', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <circle cx="12" cy="1" r="1"/>
+                                    <circle cx="12" cy="23" r="1"/>
+                                    <circle cx="20.49" cy="8.51" r="1"/>
+                                    <circle cx="3.51" cy="15.49" r="1"/>
+                                    <circle cx="20.49" cy="15.49" r="1"/>
+                                    <circle cx="3.51" cy="8.51" r="1"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Add sources</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('study', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Study and learn</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('websearch', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                                    <path d="M2 12h20"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Web search</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('canvas', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m15 5 4 4L7 21l-4-4 12-12"/>
+                                    <path d="m9 9 5 5"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Canvas</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('quizzes', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 12h6"/>
+                                    <path d="M9 16h6"/>
+                                    <path d="m19 5-7 7-3-3-5 5"/>
+                                    <path d="m21 3-1 6-6-1"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Quizzes</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('yearwithchatgpt', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M8 12l2 2 4-4"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Your Year with ChipFoundryServices</span>
+                        </button>
+                        <div class="plus-separator"></div>
+                        <button class="plus-option" onclick="selectPlusOption('exploreapps', event)">
+                            <span class="plus-option-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <circle cx="12" cy="1" r="1"/>
+                                    <circle cx="12" cy="23" r="1"/>
+                                    <circle cx="20.49" cy="8.51" r="1"/>
+                                    <circle cx="3.51" cy="15.49" r="1"/>
+                                    <circle cx="20.49" cy="15.49" r="1"/>
+                                    <circle cx="3.51" cy="8.51" r="1"/>
+                                </svg>
+                            </span>
+                            <span class="plus-option-text">Explore apps</span>
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            <a href="#">Advertising</a>
+            <a href="#">Business</a>
+            <a href="#">How Search works</a>
+        </div>
+        <div class="footer-center">
+            <span>🌿</span>
+            <span>Applying AI towards science and the environment</span>
+        </div>
+        <div class="footer-right">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Settings</a>
+        </div>
+    </footer>
+    
+    <script>
+        async function ask() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+            
+            // Hide the main heading and adjust container layout
+            const mainHeading = document.getElementById('mainHeading');
+            const mainContainer = document.getElementById('mainContainer');
+            const searchWrapper = document.getElementById('searchWrapper');
+            const container = document.getElementById('results');
+            
+            mainHeading.classList.add('hidden');
+            mainContainer.classList.add('has-results');
+            searchWrapper.classList.add('bottom');
+            
+            // Add user message
+            container.innerHTML = `<div class="message user">${escapeHtml(question)}</div>`;
+            container.classList.add('show');
+            
+            // Add typing indicator
+            const typingIndicator = `<div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dot"></div>
+            </div>`;
+            container.innerHTML += typingIndicator;
+            
+            // Clear input
+            document.getElementById('question').value = '';
+            updateSendButton();
+            
+            // Scroll to show typing indicator
+            document.getElementById('typingIndicator').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            try {
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/api.php?q=${encodeURIComponent(question)}&t=${timestamp}`);
+                const data = await response.json();
+                const result = data.response || 'No response found.';
+                
+                // Wait 3 seconds for typing indicator
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Remove typing indicator
+                document.getElementById('typingIndicator').remove();
+                
+                // Create assistant message container
+                const assistantDiv = document.createElement('div');
+                assistantDiv.className = 'message assistant';
+                container.appendChild(assistantDiv);
+                
+                // Type out the response word by word
+                await typeResponse(assistantDiv, result);
+                
+                // Scroll to search box smoothly
+                searchWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Focus back on input
+                document.getElementById('question').focus();
+            } catch (err) {
+                // Remove typing indicator on error
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) indicator.remove();
+                
+                container.innerHTML += `<div class="message assistant">Error: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+        
+        async function typeResponse(container, text) {
+            const formattedHtml = formatResponse(text);
+            
+            // Create a temporary div to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = formattedHtml;
+            
+            // Apply hierarchical indentation
+            applyHierarchicalIndentation(tempDiv);
+            
+            // Type out each element (math is already pre-rendered by KaTeX)
+            for (const element of tempDiv.children) {
+                await typeElement(container, element);
+            }
+        }
+        
+        function applyHierarchicalIndentation(container) {
+            const elements = Array.from(container.children);
+            let currentLevel = 0;
+            
+            for (let i = 0; i < elements.length; i++) {
+                const elem = elements[i];
+                const tagName = elem.tagName;
+                
+                // Detect heading level and update current hierarchy
+                if (tagName === 'H1') {
+                    currentLevel = 0;
+                } else if (tagName === 'H2') {
+                    currentLevel = 1;
+                } else if (tagName === 'H3') {
+                    currentLevel = 2;
+                } else if (tagName === 'H4') {
+                    currentLevel = 3;
+                } else if (tagName === 'H5') {
+                    currentLevel = 4;
+                } else {
+                    // Apply indentation to content elements (P, UL, DIV, PRE, TABLE, etc.)
+                    // Including math-block divs
+                    if (currentLevel > 0) {
+                        elem.classList.add(`content-level-${currentLevel}`);
+                    }
+                }
+            }
+        }
+        
+        async function typeElement(container, element) {
+            if (element.tagName === 'P') {
+                // Type paragraph with HTML formatting preserved
+                const p = document.createElement('p');
+                // Copy all classes from original element (including content-level-X)
+                p.className = element.className;
+                container.appendChild(p);
+                await typeHTML(p, element.innerHTML);
+            } else if (element.tagName === 'UL') {
+                // Type list items
+                const ul = document.createElement('ul');
+                // Copy all classes from original element
+                ul.className = element.className;
+                container.appendChild(ul);
+                
+                for (const li of element.children) {
+                    const newLi = document.createElement('li');
+                    newLi.className = li.className;
+                    ul.appendChild(newLi);
+                    await typeHTML(newLi, li.innerHTML);
+                }
+            } else if (element.tagName && element.tagName.match(/^H[1-6]$/)) {
+                // Type headers
+                const header = document.createElement(element.tagName.toLowerCase());
+                header.className = element.className;
+                container.appendChild(header);
+                await typeHTML(header, element.innerHTML);
+            } else if (element.tagName === 'PRE') {
+                // Type code blocks
+                const pre = document.createElement('pre');
+                const code = document.createElement('code');
+                pre.className = element.className;
+                pre.appendChild(code);
+                container.appendChild(pre);
+                await typeText(code, element.textContent, 20); // Faster for code
+            } else {
+                // Default: just add the element
+                const newElement = element.cloneNode(true);
+                container.appendChild(newElement);
+            }
+        }
+        
+        async function typeHTML(element, htmlContent, speed = 80) {
+            // Parse HTML content to separate text and tags
+            const parts = parseHTMLContent(htmlContent);
+            element.classList.add('typewriter', 'typing');
+            
+            let currentHTML = '';
+            
+            for (const part of parts) {
+                if (part.type === 'text') {
+                    // Type text word by word
+                    const words = part.content.split(' ');
+                    for (let i = 0; i < words.length; i++) {
+                        if (i > 0) currentHTML += ' ';
+                        currentHTML += words[i];
+                        element.innerHTML = currentHTML;
+                        await new Promise(resolve => setTimeout(resolve, speed));
+                    }
+                } else if (part.type === 'tag') {
+                    // Add HTML tags instantly
+                    currentHTML += part.content;
+                    element.innerHTML = currentHTML;
+                }
+            }
+            
+            element.classList.remove('typing');
+            
+            // Small pause between elements
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        function parseHTMLContent(html) {
+            const parts = [];
+            let currentPos = 0;
+            
+            // Simple approach: split by < and > to separate text and tags
+            const segments = html.split(/(<[^>]*>)/);
+            
+            for (const segment of segments) {
+                if (segment.trim()) {
+                    if (segment.startsWith('<') && segment.endsWith('>')) {
+                        // This is an HTML tag
+                        parts.push({ type: 'tag', content: segment });
+                    } else {
+                        // This is text content
+                        parts.push({ type: 'text', content: segment });
+                    }
+                }
+            }
+            
+            return parts;
+        }
+        
+        async function typeText(element, text, speed = 80) {
+            const words = text.split(' ');
+            element.classList.add('typewriter', 'typing');
+            
+            for (let i = 0; i < words.length; i++) {
+                element.textContent = words.slice(0, i + 1).join(' ');
+                await new Promise(resolve => setTimeout(resolve, speed));
+            }
+            
+            element.classList.remove('typing');
+            
+            // Small pause between elements
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        function escapeHtml(text) {
+            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+        
+        function toggleModeDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('modeDropdown');
+            const selector = document.getElementById('modeSelector');
+            dropdown.classList.toggle('show');
+            selector.classList.toggle('active');
+        }
+        
+        function selectMode(mode, event) {
+            event.stopPropagation();
+            
+            const options = document.querySelectorAll('.mode-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.mode-option-check').style.display = 'none';
+            });
+            
+            const selected = document.querySelector(`[data-mode="${mode}"]`);
+            selected.classList.add('selected');
+            selected.querySelector('.mode-option-check').style.display = 'block';
+            
+            const dropdown = document.getElementById('modeDropdown');
+            dropdown.classList.remove('show');
+            document.getElementById('modeSelector').classList.remove('active');
+        }
+        
+        document.addEventListener('click', (e) => {
+            // Close mode dropdown
+            if (!e.target.closest('#modeSelector')) {
+                document.getElementById('modeDropdown').classList.remove('show');
+                document.getElementById('modeSelector').classList.remove('active');
+            }
+            
+            // Close both dropdowns when clicking outside - synchronized dismissal
+            if (!e.target.closest('#plusBtn') && !e.target.closest('#plusDropdown') && !e.target.closest('#moreSubmenu')) {
+                document.getElementById('plusDropdown').classList.remove('show');
+                document.getElementById('moreSubmenu').classList.remove('show');
+            }
+        });
+        
+        // Unified touch/swipe gesture handling for perfectly synchronized dropdown movement
+        class DropdownSyncManager {
+            constructor() {
+                this.touchState = {
+                    startX: 0,
+                    startY: 0,
+                    isTracking: false,
+                    isDragging: false,
+                    dropdownsVisible: false,
+                    animationFrame: null
+                };
+                this.dropdowns = [];
+                this.init();
+            }
+            
+            init() {
+                document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+                document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+                document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+            }
+            
+            getActiveDropdowns() {
+                const plusDropdown = document.getElementById('plusDropdown');
+                const moreSubmenu = document.getElementById('moreSubmenu');
+                
+                this.dropdowns = [];
+                if (plusDropdown && plusDropdown.classList.contains('show')) {
+                    this.dropdowns.push(plusDropdown);
+                }
+                if (moreSubmenu && moreSubmenu.classList.contains('show')) {
+                    this.dropdowns.push(moreSubmenu);
+                }
+                
+                return this.dropdowns.length > 0;
+            }
+            
+            applyTransformToAll(translateX, opacity) {
+                // Use requestAnimationFrame for perfectly synchronized updates
+                if (this.touchState.animationFrame) {
+                    cancelAnimationFrame(this.touchState.animationFrame);
+                }
+                
+                this.touchState.animationFrame = requestAnimationFrame(() => {
+                    this.dropdowns.forEach(dropdown => {
+                        dropdown.style.transform = `translateX(${translateX}px)`;
+                        dropdown.style.opacity = opacity;
+                    });
+                });
+            }
+            
+            applyTransitionToAll(transition) {
+                this.dropdowns.forEach(dropdown => {
+                    dropdown.style.transition = transition;
+                });
+            }
+            
+            resetAllStyles() {
+                this.dropdowns.forEach(dropdown => {
+                    dropdown.style.transform = '';
+                    dropdown.style.opacity = '';
+                    dropdown.style.transition = '';
+                });
+            }
+            
+            closeAllDropdowns() {
+                const plusDropdown = document.getElementById('plusDropdown');
+                const moreSubmenu = document.getElementById('moreSubmenu');
+                
+                if (plusDropdown) plusDropdown.classList.remove('show');
+                if (moreSubmenu) moreSubmenu.classList.remove('show');
+            }
+            
+            handleTouchStart(e) {
+                if (this.getActiveDropdowns()) {
+                    this.touchState.startX = e.touches[0].clientX;
+                    this.touchState.startY = e.touches[0].clientY;
+                    this.touchState.isTracking = true;
+                    this.touchState.dropdownsVisible = true;
+                    this.touchState.isDragging = false;
+                    
+                    // Reset any previous transforms
+                    this.resetAllStyles();
+                }
+            }
+            
+            handleTouchMove(e) {
+                if (!this.touchState.isTracking || !this.touchState.dropdownsVisible) return;
+                
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                
+                const diffX = this.touchState.startX - currentX;
+                const diffY = this.touchState.startY - currentY;
+                
+                // Check if this is a horizontal swipe (more horizontal than vertical)
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                    this.touchState.isDragging = true;
+                    
+                    // Only allow leftward swipe (positive diffX means swiping left)
+                    if (diffX > 0) {
+                        const translateX = -diffX; // Negative to move left
+                        const opacity = Math.max(0, 1 - (diffX / 200)); // Fade out as swiping
+                        
+                        // Apply synchronized transform to all active dropdowns
+                        this.applyTransformToAll(translateX, opacity);
+                        
+                        // Prevent default scrolling during swipe
+                        e.preventDefault();
+                    }
+                }
+            }
+            
+            handleTouchEnd(e) {
+                if (!this.touchState.isTracking) return;
+                
+                if (this.touchState.isDragging) {
+                    const currentX = e.changedTouches[0].clientX;
+                    const diffX = this.touchState.startX - currentX;
+                    
+                    // If swiped far enough left (threshold: 100px), dismiss all dropdowns
+                    if (diffX > 100) {
+                        // Animate all dropdowns out synchronously
+                        this.applyTransitionToAll('transform 0.3s ease-out, opacity 0.3s ease-out');
+                        this.applyTransformToAll(-window.innerWidth, 0);
+                        
+                        // Remove classes after animation
+                        setTimeout(() => {
+                            this.closeAllDropdowns();
+                            this.resetAllStyles();
+                        }, 300);
+                    } else {
+                        // Snap back to original position with synchronized animation
+                        this.applyTransitionToAll('transform 0.2s ease-out, opacity 0.2s ease-out');
+                        this.applyTransformToAll(0, 1);
+                        
+                        // Clean up after animation
+                        setTimeout(() => {
+                            this.dropdowns.forEach(dropdown => {
+                                dropdown.style.transition = '';
+                            });
+                        }, 200);
+                    }
+                }
+                
+                // Reset touch state
+                this.touchState = {
+                    startX: 0,
+                    startY: 0,
+                    isTracking: false,
+                    isDragging: false,
+                    dropdownsVisible: false,
+                    animationFrame: null
+                };
+            }
+        }
+        
+        // Initialize the synchronized dropdown manager
+        const dropdownSync = new DropdownSyncManager();
+        
+        function togglePlusDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('plusDropdown');
+            
+            // Toggle dropdown only
+            dropdown.classList.toggle('show');
+        }
+        
+        function selectPlusOption(option, event) {
+            event.stopPropagation();
+            
+            // Close both dropdowns synchronously
+            closeBothDropdowns();
+            
+            // Handle different options
+            switch(option) {
+                case 'photos':
+                    alert('Add photos & files feature coming soon!');
+                    break;
+                case 'image':
+                    alert('Create image feature coming soon!');
+                    break;
+                case 'research':
+                    alert('Deep research feature coming soon!');
+                    break;
+                case 'shopping':
+                    alert('Shopping research feature coming soon!');
+                    break;
+                case 'agent':
+                    alert('Agent mode feature coming soon!');
+                    break;
+                case 'more':
+                    alert('More features coming soon!');
+                    break;
+                case 'sources':
+                    alert('Add sources feature coming soon!');
+                    break;
+                case 'study':
+                    alert('Study and learn feature coming soon!');
+                    break;
+                case 'websearch':
+                    alert('Web search feature coming soon!');
+                    break;
+                case 'canvas':
+                    alert('Canvas feature coming soon!');
+                    break;
+                case 'quizzes':
+                    alert('Quizzes feature coming soon!');
+                    break;
+                case 'yearwithchatgpt':
+                    alert('Your Year with ChipFoundryServices feature coming soon!');
+                    break;
+                case 'exploreapps':
+                    alert('Explore apps feature coming soon!');
+                    break;
+                default:
+                    console.log('Unknown option:', option);
+            }
+        }
+        
+        function showMoreSubmenu() {
+            const submenu = document.getElementById('moreSubmenu');
+            const firstDropdown = document.getElementById('plusDropdown');
+            
+            if (firstDropdown && submenu && firstDropdown.classList.contains('show')) {
+                const rect = firstDropdown.getBoundingClientRect();
+                submenu.style.position = 'fixed';
+                submenu.style.left = (rect.right + 4) + 'px';
+                submenu.style.top = rect.top + 'px';
+                submenu.classList.add('show');
+            }
+        }
+        
+        function hideMoreSubmenu() {
+            const submenu = document.getElementById('moreSubmenu');
+            submenu.classList.remove('show');
+        }
+        
+        // Synchronized dropdown management
+        function closeBothDropdowns() {
+            document.getElementById('plusDropdown').classList.remove('show');
+            document.getElementById('moreSubmenu').classList.remove('show');
+        }
+        
+        // Update the plus dropdown toggle to ensure coordination
+        function togglePlusDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('plusDropdown');
+            const submenu = document.getElementById('moreSubmenu');
+            
+            if (dropdown.classList.contains('show')) {
+                // Close both dropdowns synchronously
+                dropdown.classList.remove('show');
+                submenu.classList.remove('show');
+            } else {
+                // Show main dropdown
+                dropdown.classList.add('show');
+            }
+        }
+        
+        function formatResponse(text) {
+            // CRITICAL FIX: Convert literal \n from database to actual newlines
+            // Database stores \n as text, not as actual line breaks
+            // Use negative lookahead to preserve LaTeX commands like \nabla, \nu, \newline, etc.
+            text = text.replace(/\\n(?![a-zA-Z])/g, '\n');
+            
+            let html = '';
+            const lines = text.split('\n');
+            let inList = false;
+            let inOrdered = false;
+            
+            const closeLists = () => {
+                if (inList) {
+                    html += '</ul>';
+                    inList = false;
+                }
+                if (inOrdered) {
+                    html += '</ol>';
+                    inOrdered = false;
+                }
+            };
+            
+            const renderMathWithKatex = (latex, displayMode = false) => {
+                if (typeof katex !== 'undefined') {
+                    try {
+                        // Clean up the latex string
+                        let cleanLatex = latex.trim();
+                        // Remove any HTML entities that might have snuck in
+                        cleanLatex = cleanLatex.replace(/&amp;/g, '&');
+                        
+                        return katex.renderToString(cleanLatex, {
+                            displayMode: displayMode,
+                            throwOnError: false,
+                            trust: true,
+                            strict: false,
+                            output: 'html',
+                            fleqn: true  // Left-align equations (Python-style)
+                        });
+                    } catch (e) {
+                        console.error('KaTeX error:', e, 'LaTeX:', latex);
+                        return escapeHtml(latex);
+                    }
+                }
+                return escapeHtml(latex);
+            };
+            
+            const applyBold = (raw) => {
+                let processed = raw;
+                const mathSegments = [];
+                const boldMatches = [];
+                
+                // Extract inline math $...$ and render with KaTeX
+                // Use non-greedy match and handle nested braces better
+                processed = processed.replace(/\$([^\$]+?)\$/g, (match, latex) => {
+                    const rendered = renderMathWithKatex(latex, false);
+                    mathSegments.push(rendered);
+                    return `__MATH_${mathSegments.length - 1}__`;
+                });
+                
+                // Process bold markers
+                processed = processed.replace(/\*\*([^*]+)\*\*/g, (match, text) => {
+                    boldMatches.push(escapeHtml(text));
+                    return `__BOLD_${boldMatches.length - 1}__`;
+                });
+                
+                // Escape HTML in non-math content
+                processed = escapeHtml(processed);
+                
+                // Restore bold
+                processed = processed.replace(/__BOLD_(\d+)__/g, (match, index) => {
+                    return `<strong>${boldMatches[index]}</strong>`;
+                });
+                
+                // Restore math segments (already rendered as HTML)
+                processed = processed.replace(/__MATH_(\d+)__/g, (match, index) => {
+                    return mathSegments[index];
+                });
+                
+                return processed;
+            };
+            
+            const splitTableRow = (row) => {
+                return row.replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
+            };
+
+            const convertLatexToPlain = (eq, { asHtml = false, preserveLatex = false } = {}) => {
+                // If preserveLatex is true, return the LaTeX as-is for MathJax rendering
+                if (preserveLatex) {
+                    return eq;
+                }
+                
+                let s = eq;
+                // Remove LaTeX block/inline markers
+                s = s.replace(/\$\$/g, '').replace(/\$/g, '');
+                // Common operator and wrapper replacements (match single or double backslashes)
+                s = s.replace(/\\{1,2}left\s*\(/g, '(').replace(/\\{1,2}right\s*\)/g, ')');
+                s = s.replace(/\\{1,2}cdot/g, ' · ');
+                s = s.replace(/\\{1,2}times/g, ' × ');
+                s = s.replace(/\\{1,2}approx/g, ' ≈ ');
+                s = s.replace(/\\{1,2}nabla/g, '∇');
+                s = s.replace(/\\{1,2}partial/g, '∂');
+                s = s.replace(/\\{1,2}sqrt/g, '√');
+                s = s.replace(/\\{1,2}mathbf\{([^}]*)\}/g, '$1');
+                s = s.replace(/\\{1,2}mathbf\{([^}]*)\}/g, '$1');
+                s = s.replace(/\\{1,2}mathbf\s*([A-Za-z])/g, '$1');
+                s = s.replace(/\\{1,2}boldsymbol\{([^}]*)\}/g, '$1');
+                s = s.replace(/\\{1,2}mathrm\{([^}]*)\}/g, '$1');
+                s = s.replace(/\\{1,2}text\{([^}]*)\}/g, '$1');
+                s = s.replace(/\\{1,2}frac\{([^}]*)\}\{([^}]*)\}/g, '($1)/($2)');
+                // \mathcal variants (common: \mathcal{L}, occasionally mistyped as \mathcalL)
+                s = s.replace(/\\{1,2}mathcal\{([A-Za-z])\}/g, (m, ch) => {
+                    const map = { 'A':'𝓐','B':'𝓑','C':'𝓒','D':'𝓓','E':'𝓔','F':'𝓕','G':'𝓖','H':'𝓗','I':'𝓘','J':'𝓙','K':'𝓚','L':'𝓛','M':'𝓜','N':'𝓝','O':'𝓞','P':'𝓟','Q':'𝓠','R':'𝓡','S':'𝓢','T':'𝓣','U':'𝓤','V':'𝓥','W':'𝓦','X':'𝓧','Y':'𝓨','Z':'𝓩' };
+                    return map[ch] || ch;
+                });
+                s = s.replace(/\\{1,2}mathcal\s*([A-Za-z])/g, (m, ch) => ch === 'L' ? '𝓛' : ch);
+                // Greek letters (common set)
+                const greek = {
+                    alpha: 'α', beta: 'β', gamma: 'γ', Gamma: 'Γ', delta: 'δ', Delta: 'Δ',
+                    epsilon: 'ε', zeta: 'ζ', eta: 'η', theta: 'θ', Theta: 'Θ', iota: 'ι',
+                    kappa: 'κ', lambda: 'λ', Lambda: 'Λ', mu: 'μ', nu: 'ν', xi: 'ξ', Xi: 'Ξ',
+                    pi: 'π', Pi: 'Π', rho: 'ρ', sigma: 'σ', Sigma: 'Σ', tau: 'τ',
+                    phi: 'φ', Phi: 'Φ', chi: 'χ', psi: 'ψ', Psi: 'Ψ', omega: 'ω', Omega: 'Ω'
+                };
+                const greekVar = { varepsilon: 'ε', varphi: 'φ', vartheta: 'ϑ', varrho: 'ρ', varsigma: 'ς', varpi: 'ϖ' };
+                for (const [name, char] of Object.entries(greek)) {
+                    const re = new RegExp('\\\\{1,2}' + name, 'g');
+                    s = s.replace(re, char);
+                }
+                for (const [name, char] of Object.entries(greekVar)) {
+                    const re = new RegExp('\\\\{1,2}' + name, 'g');
+                    s = s.replace(re, char);
+                }
+                // Hats on single letters: \hat n -> n̂, \hat{n} -> n̂
+                s = s.replace(/\\{1,2}hat\s*\{?\s*([a-zA-Z])\s*\}?/g, (m, p1) => p1 + '\u0302');
+                // Subscripts and superscripts for digits and common letters
+                const subDigits = { '0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉' };
+                const subLetters = { 'a':'ₐ','e':'ₑ','h':'ₕ','i':'ᵢ','j':'ⱼ','k':'ₖ','l':'ₗ','m':'ₘ','n':'ₙ','o':'ₒ','p':'ₚ','r':'ᵣ','s':'ₛ','t':'ₜ','u':'ᵤ','v':'ᵥ','x':'ₓ' };
+                const supDigits = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
+                const supExtras = { '+':'⁺','-':'⁻','(':'⁽',')':'⁾','/':'⁄' };
+                const toSubscript = (str) => str.split('').map(ch => subDigits[ch] || subLetters[ch] || ch).join('');
+                const toSuperscript = (str) => str.split('').map(ch => supDigits[ch] || supExtras[ch] || ch).join('');
+                // Sub/Sup handling: use HTML in math blocks for broader character support
+                if (asHtml) {
+                    s = s.replace(/_\{\s*([^}]+)\s*\}/g, (m, inner) => `<sub>${inner.trim()}</sub>`);
+                    s = s.replace(/_([A-Za-z0-9]+)/g, (m, seq) => `<sub>${seq}</sub>`);
+                    s = s.replace(/\^\{\s*([^}]+)\s*\}/g, (m, inner) => `<sup>${inner.trim()}</sup>`);
+                    s = s.replace(/\^([A-Za-z0-9]+)/g, (m, seq) => `<sup>${seq}</sup>`);
+                } else {
+                    s = s.replace(/_\{\s*([^}]+)\s*\}/g, (m, inner) => toSubscript(inner.trim()));
+                    s = s.replace(/_([A-Za-z0-9])/g, (m, ch) => toSubscript(ch));
+                    s = s.replace(/\^\{\s*([^}]+)\s*\}/g, (m, inner) => toSuperscript(inner.trim()));
+                    s = s.replace(/\^([0-9])/g, (m, d) => toSuperscript(d));
+                }
+                // Cleanup braces remnants
+                s = s.replace(/\{\s*/g, '').replace(/\s*\}/g, '');
+                // Collapse spaces
+                s = s.replace(/\s+/g, ' ').trim();
+                return s;
+            };
+            
+            const convertInlineLatexSegments = (line) => {
+                // Replace any $...$ inline segments with plain conversion and strip stray $
+                let out = line.replace(/\$(.*?)\$/g, (m, inner) => convertLatexToPlain(inner));
+                out = out.replace(/\$/g, '');
+                // Also handle simple inline commands even without $ wrappers
+                if (/\\[A-Za-z]+/.test(out) || /[_\^]/.test(out)) {
+                    out = convertLatexToPlain(out);
+                }
+                return out;
+            };
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const trimmed = line.trim();
+                
+                // Table detection: header line with pipes followed by separator line
+                const nextLine = lines[i + 1] ? lines[i + 1].trim() : '';
+                if (trimmed.includes('|') && nextLine && nextLine.match(/^\|?\s*:?-{2,}.*\|.*$/)) {
+                    closeLists();
+                    const headers = splitTableRow(trimmed);
+                    const rows = [];
+                    let j = i + 2;
+                    while (j < lines.length && lines[j].includes('|')) {
+                        rows.push(splitTableRow(lines[j]));
+                        j++;
+                    }
+                    html += '<table class="response-table">';
+                    html += '<thead><tr>' + headers.map(h => `<th>${applyBold(h)}</th>`).join('') + '</tr></thead>';
+                    if (rows.length) {
+                        html += '<tbody>' + rows.map(r => '<tr>' + r.map(c => `<td>${applyBold(c)}</td>`).join('') + '</tr>').join('') + '</tbody>';
+                    }
+                    html += '</table>';
+                    i = j - 1;
+                    continue;
+                }
+                
+                // Math block detection: $$ markers (both multi-line and inline)
+                if (trimmed === '$$' || (trimmed.startsWith('$$') && trimmed.endsWith('$$') && trimmed.length > 4)) {
+                    // Only close lists if $$ is NOT indented (indented = part of list item)
+                    const isIndented = line.startsWith('  ') || line.startsWith('\t');
+                    if (!isIndented) closeLists();
+                    
+                    // Check if it's inline (all on one line)
+                    if (trimmed.startsWith('$$') && trimmed.endsWith('$$') && trimmed.length > 4) {
+                        // Inline display math: $$...$$
+                        const latex = trimmed.substring(2, trimmed.length - 2);
+                        const rendered = renderMathWithKatex(latex, true);
+                        html += `<div class="math-block">${rendered}</div>`;
+                    } else {
+                        // Multi-line display math
+                        let j = i + 1;
+                        let blockContent = '';
+                        while (j < lines.length && lines[j].trim() !== '$$') {
+                            blockContent += (blockContent ? '\n' : '') + lines[j];
+                            j++;
+                        }
+                        // Render with KaTeX immediately
+                        const rendered = renderMathWithKatex(blockContent, true);
+                        html += `<div class="math-block">${rendered}</div>`;
+                        i = j; // skip closing $$
+                    }
+                    continue;
+                }
+
+                if (trimmed.match(/^#{1,6}\s/)) {
+                    closeLists();
+                    const level = trimmed.match(/^#+/)[0].length;
+                    const content = trimmed.replace(/^#+\s/, '');
+                    html += `<h${level}>${applyBold(content)}</h${level}>`;
+                } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                    // Check if this is a nested bullet (indented) under an ordered list
+                    const isNestedBullet = (inOrdered && (line.startsWith('   ') || line.startsWith('\t')));
+                    if (inOrdered && !isNestedBullet) {
+                        html += '</ol>';
+                        inOrdered = false;
+                    }
+                    if (!inList) {
+                        html += '<ul>';
+                        inList = true;
+                    }
+                    const content = trimmed.substring(2);
+                    html += `<li>${applyBold(content)}</li>`;
+                } else if (trimmed.startsWith('1. ') || trimmed.match(/^\d+\.\s/)) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (!inOrdered) {
+                        html += '<ol>';
+                        inOrdered = true;
+                    }
+                    const content = trimmed.replace(/^\d+\.\s/, '');
+                    html += `<li>${applyBold(content)}</li>`;
+                } else if (trimmed.startsWith('```')) {
+                    closeLists();
+                    const lang = trimmed.substring(3);
+                    let code = '';
+                    let j = i + 1;
+                    while (j < lines.length && !lines[j].trim().startsWith('```')) {
+                        code += lines[j] + '\n';
+                        j++;
+                    }
+                    i = j; // Skip processed lines
+                    // Preserve backslashes for ASCII diagrams - don't escape them
+                    const codeContent = code.replace(/\n$/, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+                    html += `<pre><code class="language-${escapeHtml(lang)}">${codeContent}</code></pre>`;
+                } else if (trimmed.startsWith('$$') || trimmed.startsWith('$')) {
+                    // Inline or single-line math
+                    // Only close lists if line is NOT indented (indented = part of list item)
+                    const isIndented = line.startsWith('  ') || line.startsWith('\t');
+                    if (!isIndented) closeLists();
+                    if (trimmed.startsWith('$$')) {
+                        const latex = trimmed.replace(/^\$\$|\$\$$/g, '');
+                        const rendered = renderMathWithKatex(latex, true);
+                        html += `<div class="math-block">${rendered}</div>`;
+                    } else {
+                        html += `<p>${applyBold(trimmed)}</p>`;
+                    }
+                } else if (trimmed) {
+                    // Only close lists if line is NOT indented (indented = part of list item)
+                    const isIndented = line.startsWith('  ') || line.startsWith('\t');
+                    if (!isIndented) closeLists();
+                    // Let MathJax handle all math rendering
+                    html += `<p>${applyBold(trimmed)}</p>`;
+                } else {
+                    // Empty line - only close lists if we're not in an indented block
+                    // Don't close lists on empty lines within list items
+                }
+            }
+            
+            closeLists();
+            return html;
+        }
+        
+        // Toggle send arrow and voice button sharing the same position
+        const qInput = document.getElementById('question');
+        const sendBtn = document.getElementById('sendBtn');
+        const voiceBtn = document.querySelector('.voice-btn');
+        function updateSendButton() {
+            if (!sendBtn || !voiceBtn) return;
+            const hasText = qInput.value.trim().length > 0;
+            sendBtn.style.display = hasText ? 'flex' : 'none';
+            voiceBtn.style.display = hasText ? 'none' : 'flex';
+        }
+        qInput.addEventListener('input', updateSendButton);
+        qInput.addEventListener('keyup', updateSendButton);
+        qInput.addEventListener('change', updateSendButton);
+        updateSendButton();
+        
+        qInput.focus();
+    </script>
+
+
+<!-- Auth Modal -->
+<div class="auth-modal" id="authModal">
+    <div class="auth-box">
+        <button class="auth-close" onclick="closeAuth()">×</button>
+        <h2 class="auth-title" id="authTitle">Sign In</h2>
+        <form class="auth-form" id="authForm" onsubmit="handleAuth(event)">
+            <input type="email" class="auth-input" id="authEmail" placeholder="Email" required>
+            <input type="password" class="auth-input" id="authPassword" placeholder="Password" required>
+            <button type="submit" class="auth-submit" id="authSubmit">Sign In</button>
+            <div class="auth-error" id="authError"></div>
+        </form>
+        <div class="auth-switch" id="authSwitch">
+            Don't have an account? <a onclick="switchAuthMode()">Sign up</a>
+        </div>
+    </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    const userEmail = localStorage.getItem('userEmail');
+    const userId = localStorage.getItem('userId');
+    if (userEmail && userId) {
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('signUpBtn').style.display = 'none';
+        const profile = document.getElementById('userProfile');
+        profile.style.display = 'block';
+        const initial = userEmail.charAt(0).toUpperCase();
+        document.querySelectorAll('.user-avatar, .user-avatar-large').forEach(el => el.textContent = initial);
+        document.querySelector('.user-email-short').textContent = userEmail.split('@')[0];
+        document.querySelector('.user-email-full').textContent = userEmail;
+        document.getElementById('userIdDisplay').textContent = userId;
+    }
+});
+
+let authMode = 'signin';
+function showSignIn() {
+    authMode = 'signin';
+    document.getElementById('authTitle').textContent = 'Sign In';
+    document.getElementById('authSubmit').textContent = 'Sign In';
+    document.getElementById('authSwitch').innerHTML = 'Don\'t have an account? <a onclick="switchAuthMode()">Sign up</a>';
+    document.getElementById('authModal').classList.add('show');
+    document.getElementById('authError').classList.remove('show');
+}
+function showSignUp() {
+    authMode = 'signup';
+    document.getElementById('authTitle').textContent = 'Sign Up';
+    document.getElementById('authSubmit').textContent = 'Sign Up';
+    document.getElementById('authSwitch').innerHTML = 'Already have an account? <a onclick="switchAuthMode()">Sign in</a>';
+    document.getElementById('authModal').classList.add('show');
+    document.getElementById('authError').classList.remove('show');
+}
+function closeAuth() {
+    document.getElementById('authModal').classList.remove('show');
+    document.getElementById('authForm').reset();
+    document.getElementById('authError').classList.remove('show');
+}
+function switchAuthMode() {
+    if (authMode === 'signin') { showSignUp(); } else { showSignIn(); }
+}
+async function handleAuth(event) {
+    event.preventDefault();
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+    const errorDiv = document.getElementById('authError');
+    try {
+        const response = await fetch(`auth.php?action=${authMode}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (data.success) {
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userId', data.userId);
+            closeAuth();
+            location.reload();
+        } else {
+            errorDiv.textContent = data.message || 'Authentication failed';
+            errorDiv.classList.add('show');
+        }
+    } catch (err) {
+        errorDiv.textContent = 'Connection error. Please try again.';
+        errorDiv.classList.add('show');
+    }
+}
+
+function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('show'); }
+function signOut() { localStorage.clear(); location.reload(); }
+</script>
+<!-- Group Chat Popup -->
+<div class="group-chat-popup" id="groupChatPopup">
+    <div class="group-chat-box">
+        <button class="group-chat-close" onclick="closeGroupChat()">×</button>
+        <h2 class="group-chat-title">Use ChipFoundryServices together</h2>
+        <p class="group-chat-desc">Add people to your chats to plan, share ideas, and get creative.</p>
+        <div class="group-chat-actions">
+            <button class="group-chat-learn" onclick="alert('Group chat documentation coming soon!')">Learn more</button>
+            <button class="group-chat-cancel" onclick="closeGroupChat()">Cancel</button>
+            <button class="group-chat-start" onclick="startGroupChat()">Start group chat</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add People Button (shows when logged in) -->
+<button class="add-people-btn" id="addPeopleBtn" style="display: none;" onclick="showGroupChatPopup()" title="Start group chat">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+</button>
+
+<style>
+/* Add People Button */
+.add-people-btn {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 50%;
+    color: #ececec;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 100;
+}
+
+.add-people-btn:hover {
+    background: #2a2a2a;
+    border-color: #666;
+    transform: scale(1.05);
+}
+
+/* Group Chat Popup */
+.group-chat-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.group-chat-popup.show {
+    display: flex;
+}
+
+.group-chat-box {
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 480px;
+    position: relative;
+}
+
+.group-chat-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.group-chat-close:hover {
+    color: #ececec;
+}
+
+.group-chat-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #ececec;
+    margin-bottom: 12px;
+}
+
+.group-chat-desc {
+    color: #888;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
+
+.group-chat-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.group-chat-learn,
+.group-chat-cancel,
+.group-chat-start {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.group-chat-learn {
+    background: transparent;
+    color: #ececec;
+    border: 1px solid #4d4d4d;
+    margin-right: auto;
+}
+
+.group-chat-learn:hover {
+    background: #2a2a2a;
+}
+
+.group-chat-cancel {
+    background: transparent;
+    color: #ececec;
+    border: 1px solid #4d4d4d;
+}
+
+.group-chat-cancel:hover {
+    background: #2a2a2a;
+}
+
+.group-chat-start {
+    background: #ececec;
+    color: #1a1a1a;
+}
+
+.group-chat-start:hover {
+    background: #fff;
+}
+</style>
+
+<script>
+function showGroupChatPopup() {
+    document.getElementById('groupChatPopup').classList.add('show');
+}
+
+function closeGroupChat() {
+    document.getElementById('groupChatPopup').classList.remove('show');
+}
+
+async function startGroupChat() {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (!userId) {
+        alert('Please sign in to start a group chat');
+        closeGroupChat();
+        showSignIn();
+        return;
+    }
+    
+    const roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+        await fetch('group_chat.php?action=create_room', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ room_id: roomId, user_id: userId })
+        });
+        
+        closeGroupChat();
+        
+        const shareUrl = window.location.origin + '?room=' + roomId;
+        const shareMsg = `Group chat created!\n\nShare this link:\n${shareUrl}`;
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert(shareMsg + '\n\n✓ Link copied!');
+            });
+        } else {
+            alert(shareMsg);
+        }
+        
+        joinGroupRoom(roomId);
+    } catch (err) {
+        alert('Failed to create room');
+    }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room');
+    
+    if (roomId) {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert('Please sign in to join this group chat');
+            showSignIn();
+        } else {
+            joinGroupRoom(roomId);
+        }
+    }
+});
+
+// Show add people button when user is logged in
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            document.getElementById('addPeopleBtn').style.display = 'flex';
+        }
+    }, 500);
+});
+
+// Close popup on outside click
+document.addEventListener('click', function(event) {
+    const popup = document.getElementById('groupChatPopup');
+    const box = document.querySelector('.group-chat-box');
+    if (popup && event.target === popup) {
+        closeGroupChat();
+    }
+});
+</script>
+
+<!-- Group Chat Container (Full Screen) -->
+<div id="groupChatContainer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 3000;">
+    
+    <!-- Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid #4d4d4d;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button onclick="leaveGroupRoom()" style="background: transparent; border: 1px solid #4d4d4d; color: #ececec; padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+                ← Leave Room
+            </button>
+            <div>
+                <div style="color: #ececec; font-size: 18px; font-weight: 500;">Group Chat Room</div>
+                <div style="color: #888; font-size: 12px;">Room: <span id="groupRoomId"></span></div>
+            </div>
+        </div>
+        <button onclick="showParticipantsPanel()" style="background: transparent; border: 1px solid #4d4d4d; color: #ececec; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span id="participantCount">0</span> People
+        </button>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="display: flex; height: calc(100% - 73px);">
+        
+        <!-- Messages Area -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            
+            <!-- Messages -->
+            <div id="groupChatMessages" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Messages will be inserted here -->
+            </div>
+            
+            <!-- Input -->
+            <div style="padding: 16px 24px; border-top: 1px solid #4d4d4d;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="text" id="groupChatInput" placeholder="Type a message..." 
+                           style="flex: 1; background: #2a2a2a; border: 1px solid #4d4d4d; border-radius: 24px; padding: 12px 20px; color: #ececec; font-size: 14px; outline: none;">
+                    <button onclick="sendGroupMessage()" 
+                            style="background: #ececec; color: #1a1a1a; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Participants Panel -->
+        <div id="participantsPanel" style="display: none; width: 300px; border-left: 1px solid #4d4d4d; background: #0f0f0f; overflow-y: auto;">
+            <div style="padding: 16px; border-bottom: 1px solid #4d4d4d;">
+                <div style="color: #ececec; font-size: 16px; font-weight: 500;">Participants</div>
+            </div>
+            <div id="participantsList" style="padding: 8px;">
+                <!-- Participants will be inserted here -->
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+.group-message {
+    display: flex;
+    gap: 12px;
+    max-width: 70%;
+}
+
+.group-message-me {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.group-message-other {
+    margin-right: auto;
+}
+
+.group-message-avatar {
+    width: 36px;
+    height: 36px;
+    background: #7b1fa2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.group-message-content {
+    flex: 1;
+}
+
+.group-message-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.group-message-sender {
+    color: #ececec;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.group-message-time {
+    color: #888;
+    font-size: 11px;
+}
+
+.group-message-text {
+    background: #2a2a2a;
+    color: #ececec;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.group-message-me .group-message-text {
+    background: #7b1fa2;
+}
+
+.participant-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.participant-item:hover {
+    background: #1a1a1a;
+}
+
+.participant-avatar {
+    width: 40px;
+    height: 40px;
+    background: #7b1fa2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.participant-info {
+    flex: 1;
+}
+
+.participant-email {
+    color: #ececec;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.participant-status {
+    color: #4ade80;
+    font-size: 12px;
+}
+</style>
+
+<script>
+// Group Chat Real-time System
+let currentRoomId = null;
+let lastMessageId = 0;
+let pollInterval = null;
+let currentUserId = null;
+let currentUserEmail = null;
+
+// Show participants panel
+function showParticipantsPanel() {
+    const panel = document.getElementById('participantsPanel');
+    if (!panel) return;
+    
+    const isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
+}
+
+// Update participants list
+async function updateParticipants() {
+    if (!currentRoomId) return;
+    
+    try {
+        const response = await fetch(`group_chat.php?action=get_participants&room_id=${currentRoomId}`);
+        const data = await response.json();
+        
+        if (data.success && data.participants) {
+            const list = document.getElementById('participantsList');
+            if (!list) return;
+            
+            list.innerHTML = data.participants.map(p => {
+                const initial = p.user_email.charAt(0).toUpperCase();
+                const isMe = p.user_id == currentUserId;
+                return `
+                    <div class="participant-item">
+                        <div class="participant-avatar">${initial}</div>
+                        <div class="participant-info">
+                            <div class="participant-email">${p.user_email}${isMe ? ' (You)' : ''}</div>
+                            <div class="participant-status">Active</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update count
+            const countEl = document.getElementById('participantCount');
+            if (countEl) {
+                countEl.textContent = data.participants.length;
+            }
+        }
+    } catch (err) {
+        console.error('Failed to update participants:', err);
+    }
+}
+
+// Send group message
+async function sendGroupMessage() {
+    const input = document.getElementById('groupChatInput');
+    if (!input || !currentRoomId) return;
+    
+    const message = input.value.trim();
+    if (!message) return;
+    
+    try {
+        const response = await fetch('group_chat.php?action=send_message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                room_id: currentRoomId,
+                user_id: currentUserId,
+                user_email: currentUserEmail,
+                message: message
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            input.value = '';
+            pollMessages(); // Immediately fetch new messages
+        }
+    } catch (err) {
+        console.error('Failed to send message:', err);
+    }
+}
+
+// Poll for new messages
+async function pollMessages() {
+    if (!currentRoomId) return;
+    
+    try {
+        const response = await fetch(`group_chat.php?action=get_messages&room_id=${currentRoomId}&since=${lastMessageId}`);
+        const data = await response.json();
+        
+        if (data.success && data.messages && data.messages.length > 0) {
+            const container = document.getElementById('groupChatMessages');
+            if (!container) return;
+            
+            data.messages.forEach(msg => {
+                const isMe = msg.user_id == currentUserId;
+                const initial = msg.user_email.charAt(0).toUpperCase();
+                const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `group-message ${isMe ? 'group-message-me' : 'group-message-other'}`;
+                msgDiv.innerHTML = `
+                    <div class="group-message-avatar">${initial}</div>
+                    <div class="group-message-content">
+                        <div class="group-message-header">
+                            <span class="group-message-sender">${isMe ? 'You' : msg.user_email.split('@')[0]}</span>
+                            <span class="group-message-time">${time}</span>
+                        </div>
+                        <div class="group-message-text">${escapeHtml(msg.message)}</div>
+                    </div>
+                `;
+                
+                container.appendChild(msgDiv);
+                lastMessageId = Math.max(lastMessageId, msg.id);
+            });
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+    } catch (err) {
+        console.error('Failed to poll messages:', err);
+    }
+}
+
+// Join room
+async function joinGroupRoom(roomId) {
+    currentRoomId = roomId;
+    currentUserId = localStorage.getItem('userId');
+    currentUserEmail = localStorage.getItem('userEmail');
+    
+    if (!currentUserId || !currentUserEmail) {
+        alert('Please sign in first');
+        return;
+    }
+    
+    try {
+        // Join room
+        await fetch('group_chat.php?action=join_room', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                room_id: roomId,
+                user_id: currentUserId,
+                user_email: currentUserEmail
+            })
+        });
+        
+        // Show group chat UI
+        document.getElementById('groupChatContainer').style.display = 'block';
+        document.getElementById('groupRoomId').textContent = roomId;
+        
+        // Start polling
+        pollMessages();
+        updateParticipants();
+        
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(() => {
+            pollMessages();
+            updateParticipants();
+        }, 2000); // Poll every 2 seconds
+        
+    } catch (err) {
+        console.error('Failed to join room:', err);
+    }
+}
+
+// Leave room
+function leaveGroupRoom() {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+    }
+    
+    currentRoomId = null;
+    lastMessageId = 0;
+    
+    document.getElementById('groupChatContainer').style.display = 'none';
+    document.getElementById('groupChatMessages').innerHTML = '';
+    
+    // Reload page to reset
+    location.href = location.origin;
+}
+
+// Enter key to send
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('groupChatInput');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendGroupMessage();
+            }
+        });
+    }
+});
+</script>
+<!-- User Profile Modal -->
+<div class="profile-modal" id="profileModal">
+    <div class="profile-box">
+        <button class="profile-close" onclick="closeProfile()">×</button>
+        
+        <div class="profile-header">
+            <div class="profile-avatar-large" id="profileAvatarLarge">M</div>
+            <h2 class="profile-name" id="profileName">User</h2>
+            <div class="profile-badge" id="profileBadge">User #1</div>
+        </div>
+        
+        <div class="profile-content">
+            
+            <div class="profile-section">
+                <div class="profile-section-title">Account Information</div>
+                <div class="profile-info-grid">
+                    <div class="profile-info-item">
+                        <div class="profile-info-label">Email</div>
+                        <div class="profile-info-value" id="profileEmail">-</div>
+                    </div>
+                    <div class="profile-info-item">
+                        <div class="profile-info-label">User ID</div>
+                        <div class="profile-info-value" id="profileUserId">-</div>
+                    </div>
+                    <div class="profile-info-item">
+                        <div class="profile-info-label">Member Since</div>
+                        <div class="profile-info-value" id="profileMemberSince">-</div>
+                    </div>
+                    <div class="profile-info-item">
+                        <div class="profile-info-label">Last Login</div>
+                        <div class="profile-info-value" id="profileLastLogin">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <div class="profile-section-title">Activity Stats</div>
+                <div class="profile-stats-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value" id="profileChatCount">0</div>
+                        <div class="profile-stat-label">Chats</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value" id="profileMessageCount">0</div>
+                        <div class="profile-stat-label">Messages</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value" id="profileGroupCount">0</div>
+                        <div class="profile-stat-label">Groups</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <div class="profile-section-title">Quick Actions</div>
+                <div class="profile-actions">
+                    <button class="profile-action-btn" onclick="showChangePassword()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Change Password
+                    </button>
+                    <button class="profile-action-btn" onclick="alert('Export data coming soon!')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export Data
+                    </button>
+                    <button class="profile-action-btn profile-action-danger" onclick="confirmDeleteAccount()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="profile-footer">
+            <button class="profile-close-btn" onclick="closeProfile()">Close</button>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+.profile-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2500;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.profile-modal.show {
+    display: flex;
+}
+
+.profile-box {
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    margin: 20px;
+}
+
+.profile-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.profile-close:hover {
+    color: #ececec;
+}
+
+.profile-header {
+    text-align: center;
+    padding: 40px 32px 32px;
+    border-bottom: 1px solid #4d4d4d;
+}
+
+.profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    background: #7b1fa2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 500;
+    margin: 0 auto 16px;
+}
+
+.profile-name {
+    color: #ececec;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.profile-badge {
+    color: #888;
+    font-size: 14px;
+}
+
+.profile-content {
+    padding: 24px 32px;
+}
+
+.profile-section {
+    margin-bottom: 32px;
+}
+
+.profile-section:last-child {
+    margin-bottom: 0;
+}
+
+.profile-section-title {
+    color: #ececec;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.profile-info-item {
+    background: #2a2a2a;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.profile-info-label {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.profile-info-value {
+    color: #ececec;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.profile-stat-card {
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.profile-stat-value {
+    color: #7b1fa2;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.profile-stat-label {
+    color: #888;
+    font-size: 12px;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profile-action-btn {
+    background: #2a2a2a;
+    border: 1px solid #4d4d4d;
+    color: #ececec;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.profile-action-btn:hover {
+    background: #3a3a3a;
+    border-color: #666;
+}
+
+.profile-action-danger {
+    color: #ff6b6b;
+}
+
+.profile-action-danger:hover {
+    background: #3a1a1a;
+    border-color: #ff6b6b;
+}
+
+.profile-footer {
+    padding: 16px 32px;
+    border-top: 1px solid #4d4d4d;
+    text-align: right;
+}
+
+.profile-close-btn {
+    background: #ececec;
+    color: #1a1a1a;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-close-btn:hover {
+    background: #fff;
+}
+
+@media (max-width: 640px) {
+    .profile-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+async function showProfile() {
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (!userId || !userEmail) {
+        alert('Please sign in first');
+        return;
+    }
+    
+    // Set basic info
+    const initial = userEmail.charAt(0).toUpperCase();
+    document.getElementById('profileAvatarLarge').textContent = initial;
+    document.getElementById('profileName').textContent = userEmail.split('@')[0];
+    document.getElementById('profileBadge').textContent = `User #${userId}`;
+    document.getElementById('profileEmail').textContent = userEmail;
+    document.getElementById('profileUserId').textContent = userId;
+    
+    // Fetch user details from database
+    try {
+        const response = await fetch(`profile.php?user_id=${userId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update dates
+            if (data.created_at) {
+                const created = new Date(data.created_at);
+                document.getElementById('profileMemberSince').textContent = created.toLocaleDateString();
+            }
+            
+            if (data.last_login) {
+                const lastLogin = new Date(data.last_login);
+                document.getElementById('profileLastLogin').textContent = lastLogin.toLocaleString();
+            } else {
+                document.getElementById('profileLastLogin').textContent = 'Never';
+            }
+            
+            // Update stats
+            document.getElementById('profileChatCount').textContent = data.chat_count || 0;
+            document.getElementById('profileMessageCount').textContent = data.message_count || 0;
+            document.getElementById('profileGroupCount').textContent = data.group_count || 0;
+        }
+    } catch (err) {
+        console.error('Failed to load profile:', err);
+    }
+    
+    // Show modal
+    document.getElementById('profileModal').classList.add('show');
+}
+
+function closeProfile() {
+    document.getElementById('profileModal').classList.remove('show');
+}
+
+function confirmDeleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        if (confirm('Really delete? All your data will be lost forever!')) {
+            alert('Account deletion feature coming soon. Please contact support.');
+        }
+    }
+}
+
+// Close on outside click
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('profileModal');
+    if (event.target === modal) {
+        closeProfile();
+    }
+});
+</script>
+
+<!-- Change Password Modal -->
+<div class="change-password-modal" id="changePasswordModal">
+    <div class="change-password-box">
+        <button class="change-password-close" onclick="closeChangePassword()">×</button>
+        <h2 class="change-password-title">Change Password</h2>
+        <p class="change-password-desc">Enter your current password and choose a new one.</p>
+        
+        <form class="change-password-form" id="changePasswordForm" onsubmit="handleChangePassword(event)">
+            <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" class="form-input" id="newPassword" placeholder="Enter new password (min 6 characters)" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password" required minlength="6">
+            </div>
+            
+            <div class="change-password-error" id="changePasswordError"></div>
+            <div class="change-password-success" id="changePasswordSuccess"></div>
+            
+            <div class="change-password-actions">
+                <button type="button" class="btn-cancel" onclick="closeChangePassword()">Cancel</button>
+                <button type="submit" class="btn-submit">Change Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.change-password-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+}
+
+.change-password-modal.show {
+    display: flex;
+}
+
+.change-password-box {
+    background: #1a1a1a;
+    border: 1px solid #4d4d4d;
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 450px;
+    position: relative;
+}
+
+.change-password-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.change-password-close:hover {
+    color: #ececec;
+}
+
+.change-password-title {
+    color: #ececec;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.change-password-desc {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.change-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    color: #ececec;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-input {
+    background: #2a2a2a;
+    border: 1px solid #4d4d4d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #ececec;
+    font-size: 14px;
+}
+
+.form-input:focus {
+    border-color: #7b1fa2;
+    outline: none;
+}
+
+.change-password-error {
+    color: #ff6b6b;
+    font-size: 14px;
+    text-align: center;
+    display: none;
+    padding: 12px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 8px;
+}
+
+.change-password-error.show {
+    display: block;
+}
+
+.change-password-success {
+    color: #4ade80;
+    font-size: 14px;
+    text-align: center;
+    display: none;
+    padding: 12px;
+    background: rgba(74, 222, 128, 0.1);
+    border-radius: 8px;
+}
+
+.change-password-success.show {
+    display: block;
+}
+
+.change-password-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #4d4d4d;
+    color: #ececec;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-cancel:hover {
+    background: #2a2a2a;
+}
+
+.btn-submit {
+    background: #7b1fa2;
+    border: none;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-submit:hover {
+    background: #9c27b0;
+}
+</style>
+
+<script>
+function showChangePassword() {
+    // Close profile modal first
+    closeProfile();
+    
+    // Reset form
+    document.getElementById('changePasswordForm').reset();
+    document.getElementById('changePasswordError').classList.remove('show');
+    document.getElementById('changePasswordSuccess').classList.remove('show');
+    
+    // Show modal
+    document.getElementById('changePasswordModal').classList.add('show');
+}
+
+function closeChangePassword() {
+    document.getElementById('changePasswordModal').classList.remove('show');
+}
+
+async function handleChangePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errorDiv = document.getElementById('changePasswordError');
+    const successDiv = document.getElementById('changePasswordSuccess');
+    
+    // Hide previous messages
+    errorDiv.classList.remove('show');
+    successDiv.classList.remove('show');
+    
+    // Validate passwords match
+    if (newPassword !== confirmPassword) {
+        errorDiv.textContent = 'New passwords do not match';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    // Validate password length
+    if (newPassword.length < 6) {
+        errorDiv.textContent = 'Password must be at least 6 characters';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (!userId || !userEmail) {
+        errorDiv.textContent = 'Please sign in again';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    try {
+        const response = await fetch('change_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                email: userEmail,
+                current_password: currentPassword,
+                new_password: newPassword
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            successDiv.textContent = 'Password changed successfully!';
+            successDiv.classList.add('show');
+            
+            // Clear form
+            document.getElementById('changePasswordForm').reset();
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeChangePassword();
+            }, 2000);
+        } else {
+            errorDiv.textContent = data.message || 'Failed to change password';
+            errorDiv.classList.add('show');
+        }
+    } catch (err) {
+        errorDiv.textContent = 'Connection error. Please try again.';
+        errorDiv.classList.add('show');
+    }
+}
+
+// Close on outside click
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('changePasswordModal');
+    if (event.target === modal) {
+        closeChangePassword();
+    }
+});
+</script>
+
+<div id="cfs-video-overlay" style="position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;"><video id="cfs-hero-video" src="/semi_001_with_sound.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:contain;"></video><button id="cfs-video-unmute" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:30px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:15px;cursor:pointer;backdrop-filter:blur(4px);font-weight:600;">🔊 Tap for Sound</button><button id="cfs-video-close" style="position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);z-index:100000;">×</button></div><script>(function(){var v=document.getElementById("cfs-hero-video");var ub=document.getElementById("cfs-video-unmute");document.getElementById("cfs-video-close").addEventListener("click",function(){document.getElementById("cfs-video-overlay").remove();});ub.addEventListener("click",function(){v.muted=false;ub.style.display="none";});v.play().catch(function(){});})();</script></body>
+</html>

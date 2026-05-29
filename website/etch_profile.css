@@ -1,0 +1,65 @@
+/* Minimal stylesheet to render the ASCII flow diagram exactly as stored */
+:root {
+    --bg: #0b0c0f;
+    --panel: #11131a;
+    --text: #e8e8e8;
+    --muted: #9aa0ac;
+    --border: #2a2e38;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Mono", "Source Code Pro", Menlo, Consolas, monospace;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+main {
+    width: min(1100px, 95vw);
+    padding: 24px;
+}
+
+.header {
+    margin-bottom: 16px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.header .note {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.viewer {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+.status {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}

@@ -1,0 +1,125 @@
+<!-- Customer Chat Widget - Add this to index.html -->
+<div id="live-chat-widget">
+    <div id="chat-button" onclick="toggleChat()">
+        <span id="chat-icon">💬</span>
+        <span id="unread-badge" style="display:none;">1</span>
+    </div>
+    <div id="chat-box" style="display:none;">
+        <div id="chat-header">
+            <span>Chat with Support</span>
+            <button onclick="toggleChat()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;">×</button>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<style>
+#live-chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+#chat-button { width: 60px; height: 60px; background: #0066cc; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; }
+#chat-icon { font-size: 28px; }
+#unread-badge { position: absolute; top: -5px; right: -5px; background: #dc2626; color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+#chat-box { position: absolute; bottom: 70px; right: 0; width: 350px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+#chat-header { background: #0066cc; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+#chat-messages { flex: 1; padding: 1rem; overflow-y: auto; background: #f8f9fa; }
+.chat-msg { margin-bottom: 0.75rem; max-width: 80%; clear: both; }
+.chat-msg.user { float: right; }
+.chat-msg.support { float: left; }
+.chat-msg .bubble { padding: 0.75rem 1rem; border-radius: 12px; word-wrap: break-word; }
+.chat-msg.user .bubble { background: #0066cc; color: white; border-bottom-right-radius: 4px; }
+.chat-msg.support .bubble { background: white; border: 1px solid #ddd; border-bottom-left-radius: 4px; color: #333; }
+.chat-msg .time { font-size: 0.7rem; color: #999; margin-top: 0.25rem; }
+.chat-msg.user .time { text-align: right; }
+.chat-msg.support .time { text-align: left; }
+#chat-input-area { display: flex; padding: 0.75rem; border-top: 1px solid #ddd; background: white; }
+#chat-input { flex: 1; padding: 0.75rem; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+#chat-input:focus { border-color: #0066cc; }
+#chat-input-area button { margin-left: 0.5rem; padding: 0.75rem 1rem; background: #0066cc; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: 600; }
+.clearfix::after { content: ""; clear: both; display: table; }
+</style>
+
+<script>
+(function() {
+    var chatSessionId = localStorage.getItem('chatSessionId');
+    if (!chatSessionId) {
+        chatSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('chatSessionId', chatSessionId);
+    }
+    var chatOpen = false;
+    var lastMessageCount = 0;
+
+    window.toggleChat = function() {
+        chatOpen = !chatOpen;
+        document.getElementById('chat-box').style.display = chatOpen ? 'flex' : 'none';
+        document.getElementById('unread-badge').style.display = 'none';
+        if (chatOpen) {
+            loadChatMessages();
+            document.getElementById('chat-input').focus();
+        }
+    };
+
+    window.sendChatMessage = function() {
+        var input = document.getElementById('chat-input');
+        var msg = input.value.trim();
+        if (!msg) return;
+        
+        input.value = '';
+        
+        fetch('/chat_api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'send', session_id: chatSessionId, message: msg, sender: 'user' })
+        }).then(function() {
+            loadChatMessages();
+        });
+    };
+
+    function loadChatMessages() {
+        fetch('/chat_api.php?action=get&session_id=' + chatSessionId)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var messagesDiv = document.getElementById('chat-messages');
+                if (!data.messages || data.messages.length === 0) {
+                    messagesDiv.innerHTML = '<div style="text-align:center;color:#999;padding:2rem;">Start a conversation...</div>';
+                    return;
+                }
+                
+                var html = '';
+                data.messages.forEach(function(m) {
+                    var time = new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    var senderClass = m.sender === 'support' ? 'support' : 'user';
+                    html += '<div class="chat-msg ' + senderClass + '"><div class="bubble">' + escapeHtml(m.message) + '</div><div class="time">' + time + '</div></div>';
+                });
+                html += '<div class="clearfix"></div>';
+                messagesDiv.innerHTML = html;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                // Check for new support messages
+                var supportMsgs = data.messages.filter(function(m) { return m.sender === 'support'; }).length;
+                if (supportMsgs > lastMessageCount && !chatOpen) {
+                    document.getElementById('unread-badge').style.display = 'flex';
+                }
+                lastMessageCount = supportMsgs;
+            });
+    }
+    
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Poll for new messages every 3 seconds
+    setInterval(function() {
+        loadChatMessages();
+    }, 3000);
+
+    // Initial check after 2 seconds
+    setTimeout(function() {
+        loadChatMessages();
+    }, 2000);
+})();
+</script>

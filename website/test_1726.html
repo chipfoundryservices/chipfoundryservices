@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test ID 1726</title>
+    <style>
+        body { font-family: monospace; white-space: pre-wrap; word-wrap: break-word; }
+        .section { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h2>ID 1726 Response Test</h2>
+    <div id="content"></div>
+    
+    <script>
+        fetch('/api.php?q=id:1726')
+            .then(r => r.json())
+            .then(data => {
+                const resp = data.response;
+                const idx = resp.indexOf('Complete Flow');
+                if (idx > 0) {
+                    const sample = resp.substring(idx, idx + 400);
+                    document.getElementById('content').textContent = sample;
+                }
+            })
+            .catch(e => document.getElementById('content').textContent = 'Error: ' + e.message);
+    </script>
+</body>
+</html>

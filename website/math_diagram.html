@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map of Mathematics - Interactive Diagram</title>
+    <link rel="stylesheet" href="math_diagram.css">
+</head>
+<body>
+    <div class="diagram-container">
+        <svg id="mathDiagram" viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
+            <!-- Define gradients and filters -->
+            <defs>
+                <linearGradient id="foundationGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="coreGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="appliedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#27ae60;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#229954;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+                </filter>
+            </defs>
+
+            <!-- FOUNDATIONS LAYER -->
+            <g class="layer" id="foundations">
+                <rect x="250" y="20" width="500" height="80" rx="10" fill="url(#foundationGrad)" filter="url(#shadow)" class="box foundation"/>
+                <text x="500" y="55" class="text-main">FOUNDATIONS</text>
+                <text x="500" y="75" class="text-sub">Logic • Set Theory • Category Theory</text>
+            </g>
+
+            <!-- Connection from foundations -->
+            <line x1="500" y1="100" x2="500" y2="150" class="connection-primary"/>
+
+            <!-- CORE LAYER 1: Three main pillars -->
+            <g class="layer" id="core-pillars">
+                <!-- ALGEBRA -->
+                <rect x="50" y="160" width="200" height="100" rx="8" fill="url(#coreGrad)" filter="url(#shadow)" class="box core-pillar" data-field="algebra"/>
+                <text x="150" y="200" class="text-main">ALGEBRA</text>
+                <text x="150" y="225" class="text-small">Linear Algebra</text>
+                <text x="150" y="240" class="text-small">Group Theory</text>
+
+                <!-- ANALYSIS -->
+                <rect x="400" y="160" width="200" height="100" rx="8" fill="url(#coreGrad)" filter="url(#shadow)" class="box core-pillar" data-field="analysis"/>
+                <text x="500" y="200" class="text-main">ANALYSIS</text>
+                <text x="500" y="225" class="text-small">Real & Complex</text>
+                <text x="500" y="240" class="text-small">Differential Equations</text>
+
+                <!-- GEOMETRY/TOPOLOGY -->
+                <rect x="750" y="160" width="200" height="100" rx="8" fill="url(#coreGrad)" filter="url(#shadow)" class="box core-pillar" data-field="geometry"/>
+                <text x="850" y="200" class="text-main">GEOMETRY</text>
+                <text x="850" y="225" class="text-small">Differential Geometry</text>
+                <text x="850" y="240" class="text-small">Topology</text>
+            </g>
+
+            <!-- Bidirectional connections between pillars -->
+            <line x1="250" y1="210" x2="400" y2="210" class="connection-secondary" marker-end="url(#arrowhead-secondary)"/>
+            <line x1="400" y1="210" x2="250" y2="210" class="connection-secondary" marker-end="url(#arrowhead-secondary)"/>
+            <line x1="600" y1="210" x2="750" y2="210" class="connection-secondary" marker-end="url(#arrowhead-secondary)"/>
+            <line x1="750" y1="210" x2="600" y2="210" class="connection-secondary" marker-end="url(#arrowhead-secondary)"/>
+
+            <!-- Vertical connections from pillars -->
+            <line x1="150" y1="260" x2="150" y2="310" class="connection-primary"/>
+            <line x1="500" y1="260" x2="500" y2="310" class="connection-primary"/>
+            <line x1="850" y1="260" x2="850" y2="310" class="connection-primary"/>
+
+            <!-- CORE LAYER 2: Secondary fields -->
+            <g class="layer" id="secondary-fields">
+                <!-- NUMBER THEORY -->
+                <rect x="50" y="320" width="180" height="90" rx="8" fill="#f39c12" filter="url(#shadow)" class="box secondary"/>
+                <text x="140" y="355" class="text-main">NUMBER THEORY</text>
+                <text x="140" y="375" class="text-small">Prime Numbers</text>
+                <text x="140" y="390" class="text-small">Algebraic Number Theory</text>
+
+                <!-- COMBINATORICS -->
+                <rect x="410" y="320" width="180" height="90" rx="8" fill="#f39c12" filter="url(#shadow)" class="box secondary"/>
+                <text x="500" y="355" class="text-main">COMBINATORICS</text>
+                <text x="500" y="375" class="text-small">Graph Theory</text>
+                <text x="500" y="390" class="text-small">Ramsey Theory</text>
+
+                <!-- PROBABILITY & STATISTICS -->
+                <rect x="770" y="320" width="180" height="90" rx="8" fill="#f39c12" filter="url(#shadow)" class="box secondary"/>
+                <text x="860" y="355" class="text-main">PROBABILITY</text>
+                <text x="860" y="375" class="text-small">& STATISTICS</text>
+                <text x="860" y="390" class="text-small">Limit Theorems</text>
+            </g>
+
+            <!-- Connections from secondary to applied -->
+            <line x1="140" y1="410" x2="350" y2="490" class="connection-primary"/>
+            <line x1="500" y1="410" x2="500" y2="490" class="connection-primary"/>
+            <line x1="860" y1="410" x2="650" y2="490" class="connection-primary"/>
+
+            <!-- APPLIED MATHEMATICS LAYER -->
+            <g class="layer" id="applied">
+                <rect x="250" y="500" width="500" height="100" rx="10" fill="url(#appliedGrad)" filter="url(#shadow)" class="box applied"/>
+                <text x="500" y="540" class="text-main">APPLIED MATHEMATICS</text>
+                <text x="500" y="565" class="text-sub">Numerical Analysis • Optimization • Mathematical Physics</text>
+            </g>
+
+            <!-- GRAND CONNECTIONS LAYER -->
+            <g class="layer" id="connections">
+                <!-- Langlands Program -->
+                <rect x="100" y="640" width="220" height="90" rx="8" fill="#9b59b6" filter="url(#shadow)" class="box connection-box"/>
+                <text x="210" y="675" class="text-main">Langlands Program</text>
+                <text x="210" y="695" class="text-small">Number Theory ↔</text>
+                <text x="210" y="710" class="text-small">Representation Theory</text>
+
+                <!-- Mirror Symmetry -->
+                <rect x="390" y="640" width="220" height="90" rx="8" fill="#9b59b6" filter="url(#shadow)" class="box connection-box"/>
+                <text x="500" y="675" class="text-main">Mirror Symmetry</text>
+                <text x="500" y="695" class="text-small">Algebraic Geometry ↔</text>
+                <text x="500" y="710" class="text-small">Symplectic Geometry</text>
+
+                <!-- TQFT -->
+                <rect x="680" y="640" width="220" height="90" rx="8" fill="#9b59b6" filter="url(#shadow)" class="box connection-box"/>
+                <text x="790" y="675" class="text-main">Topological QFT</text>
+                <text x="790" y="695" class="text-small">Topology ↔</text>
+                <text x="790" y="710" class="text-small">Quantum Invariants</text>
+            </g>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowhead-secondary" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#34495e"/>
+                </marker>
+            </defs>
+
+            <!-- Legend -->
+            <g class="legend" id="legend">
+                <text x="20" y="820" class="legend-title">Field Categories:</text>
+                <rect x="20" y="835" width="15" height="15" fill="#2980b9" class="legend-box"/>
+                <text x="40" y="847" class="legend-text">Foundations</text>
+
+                <rect x="200" y="835" width="15" height="15" fill="#c0392b" class="legend-box"/>
+                <text x="220" y="847" class="legend-text">Core Fields</text>
+
+                <rect x="380" y="835" width="15" height="15" fill="#f39c12" class="legend-box"/>
+                <text x="400" y="847" class="legend-text">Secondary Fields</text>
+
+                <rect x="600" y="835" width="15" height="15" fill="#27ae60" class="legend-box"/>
+                <text x="620" y="847" class="legend-text">Applied</text>
+
+                <rect x="800" y="835" width="15" height="15" fill="#9b59b6" class="legend-box"/>
+                <text x="820" y="847" class="legend-text">Grand Connections</text>
+            </g>
+        </svg>
+    </div>
+
+    <script src="math_diagram.js"></script>
+</body>
+</html>

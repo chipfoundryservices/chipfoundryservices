@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inference Service</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d0d0d;
+            color: #ececec;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d2d2d;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header a, .header-link {
+            color: #ececec;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .header a:hover, .header-link:hover { opacity: 0.7; }
+        
+        .apps-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #4d4d4d;
+            border-radius: 50%;
+            background: transparent;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+        }
+        
+        .apps-btn:hover { border-color: #888; }
+        
+        /* Main content */
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .main-heading {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .search-wrapper {
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .search-bar {
+            background: #1a1a1a;
+            border: 1px solid #4d4d4d;
+            border-radius: 28px;
+            padding: 12px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .search-bar-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-bar:hover { border-color: #666; }
+        .search-bar:focus-within { border-color: #888; box-shadow: 0 0 0 1px #888; }
+        
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            color: #ececec;
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .search-input::placeholder { color: #888; }
+        
+        .search-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 0;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            border-radius: 8px;
+        }
+        
+        .icon-btn:hover { opacity: 0.7; }
+        
+        .mic-btn {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 0;
+            border-radius: 50%;
+            color: #0d0d0d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .mic-btn:hover { background: #e0e0e0; }
+        
+        .voice-btn {
+            width: 40px;
+            height: 40px;
+            background: #ffffff;
+            border: 0;
+            border-radius: 50%;
+            color: #0d0d0d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            transition: transform 0.12s ease;
+        }
+        .voice-btn:hover { transform: scale(1.03); }
+        
+        .search-bar-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 4px;
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .plus-btn {
+            width: 28px;
+            height: 28px;
+            background: transparent;
+            border: 1px solid #4d4d4d;
+            border-radius: 6px;
+            color: #ececec;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .plus-btn:hover { border-color: #666; }
+        
+        .mode-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #3f4d5a;
+            border: 1px solid #4d6680;
+            border-radius: 20px;
+            color: #ececec;
+            cursor: pointer;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .mode-selector:hover { border-color: #5a7a99; }
+        
+        .mode-selector.active {
+            background: #4a5d70;
+        }
+        
+        .mode-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #262d33;
+            border: 1px solid #4d4d4d;
+            border-radius: 12px;
+            min-width: 220px;
+            margin-top: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .mode-dropdown.show {
+            display: block;
+        }
+        
+        .mode-dropdown-header {
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #888;
+            border-bottom: 1px solid #4d4d4d;
+            font-weight: 500;
+        }
+        
+        .mode-option {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #ececec;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .mode-option:hover {
+            background: #3a4248;
+        }
+        
+        .mode-option.selected {
+            color: #10a37f;
+        }
+        
+        .mode-option-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .mode-option-check {
+            margin-left: auto;
+            color: #10a37f;
+            font-size: 12px;
+        }
+        
+        .mode-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .results {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px 60px;
+            width: 100%;
+            display: none;
+        }
+        
+        .results.show { display: block; }
+        
+        .message {
+            margin-bottom: 24px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        
+        .message.user {
+            background: transparent;
+            color: #ececec;
+            text-align: right;
+            margin-left: auto;
+            max-width: 80%;
+        }
+        
+        .message.assistant {
+            background: #1a1a1a;
+            color: #d1d5db;
+            max-width: 100%;
+        }
+        
+        .message code {
+            background: #0d0d0d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .message pre {
+            background: #0d0d0d;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+        
+        .message pre code {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: #e0e0e0;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #2d2d2d;
+        }
+        
+        .footer-left, .footer-right {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-center {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #10a37f;
+        }
+        
+        footer a { color: #888; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="#about">About</a>
+            <a href="#store">Store</a>
+        </div>
+        <div class="header-right">
+            <a href="#email">Email</a>
+            <a href="#images">Images</a>
+            <button class="apps-btn" title="Apps">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="4" cy="4" r="2"/>
+                    <circle cx="12" cy="4" r="2"/>
+                    <circle cx="20" cy="4" r="2"/>
+                    <circle cx="4" cy="12" r="2"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <circle cx="20" cy="12" r="2"/>
+                    <circle cx="4" cy="20" r="2"/>
+                    <circle cx="12" cy="20" r="2"/>
+                    <circle cx="20" cy="20" r="2"/>
+                </svg>
+            </button>
+            <div style="width: 32px; height: 32px; background: #7b1fa2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px;">m</div>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="main-heading">What can I help with?</h1>
+        
+        <div class="search-wrapper">
+            <div class="search-bar">
+                <div class="search-bar-input-row">
+                    <input type="text" class="search-input" id="question" placeholder="Ask anything" onkeypress="if(event.key==='Enter')ask()">
+                    <div class="search-controls">
+                        <button class="mic-btn" title="Voice" onclick="alert('Voice feature coming soon')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0m5 7v3m-4 0h8"/>
+                            </svg>
+                        </button>
+                        <button class="voice-btn" title="Record/Send" onclick="alert('Voice send coming soon')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <circle cx="5.5" cy="12" r="1.4"/>
+                                <rect x="8" y="8" width="2.6" height="8" rx="1.3"/>
+                                <rect x="11.7" y="6" width="2.6" height="12" rx="1.3"/>
+                                <rect x="15.4" y="8" width="2.6" height="8" rx="1.3"/>
+                                <circle cx="19.5" cy="12" r="1.4"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="search-bar-controls">
+                    <button class="plus-btn">+</button>
+                    <div class="mode-selector" id="modeSelector" onclick="toggleModeDropdown(event)">
+                        <span class="mode-icon">⏱</span>
+                        <span>Thinking</span>
+                        <span>▼</span>
+                        
+                        <div class="mode-dropdown" id="modeDropdown">
+                            <div class="mode-dropdown-header">Thinking time</div>
+                            <button class="mode-option selected" data-mode="standard" onclick="selectMode('standard', event)">
+                                <span class="mode-option-icon">⏱</span>
+                                <span>Standard</span>
+                                <span class="mode-option-check">✓</span>
+                            </button>
+                            <button class="mode-option" data-mode="extended" onclick="selectMode('extended', event)">
+                                <span class="mode-option-icon">⏱</span>
+                                <span>Extended</span>
+                                <span class="mode-option-check">✓</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results -->
+    <div class="results" id="results"></div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            <a href="#">Advertising</a>
+            <a href="#">Business</a>
+            <a href="#">How Search works</a>
+        </div>
+        <div class="footer-center">
+            <span>🌿</span>
+            <span>Applying AI towards science and the environment</span>
+        </div>
+        <div class="footer-right">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Settings</a>
+        </div>
+    </footer>
+    
+    <script>
+        async function ask() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+            
+            const container = document.getElementById('results');
+            container.innerHTML = `<div class="message user">${escapeHtml(question)}</div>`;
+            container.classList.add('show');
+            
+            try {
+                const response = await fetch(`/api.php?q=${encodeURIComponent(question)}`);
+                const data = await response.json();
+                const result = data.response || 'No response found.';
+                
+                let html = `<div class="message assistant">`;
+                html += formatResponse(result);
+                html += `</div>`;
+                
+                container.innerHTML += html;
+                
+                // Render KaTeX if available
+                if (window.renderMathInElement) {
+                    renderMathInElement(container, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ]
+                    });
+                }
+            } catch (err) {
+                container.innerHTML += `<div class="message assistant">Error: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+        
+        function escapeHtml(text) {
+            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+        
+        function toggleModeDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('modeDropdown');
+            const selector = document.getElementById('modeSelector');
+            dropdown.classList.toggle('show');
+            selector.classList.toggle('active');
+        }
+        
+        function selectMode(mode, event) {
+            event.stopPropagation();
+            
+            const options = document.querySelectorAll('.mode-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.mode-option-check').style.display = 'none';
+            });
+            
+            const selected = document.querySelector(`[data-mode="${mode}"]`);
+            selected.classList.add('selected');
+            selected.querySelector('.mode-option-check').style.display = 'block';
+            
+            const dropdown = document.getElementById('modeDropdown');
+            dropdown.classList.remove('show');
+            document.getElementById('modeSelector').classList.remove('active');
+        }
+        
+        document.addEventListener('click', () => {
+            document.getElementById('modeDropdown').classList.remove('show');
+            document.getElementById('modeSelector').classList.remove('active');
+        });
+        
+        function formatResponse(text) {
+            let html = '';
+            const lines = text.split('\n');
+            
+            for (let line of lines) {
+                const trimmed = line.trim();
+                
+                if (trimmed.match(/^#{1,6}\s/)) {
+                    const level = trimmed.match(/^#+/)[0].length;
+                    const content = trimmed.replace(/^#+\s/, '');
+                    html += `<h${level}>${escapeHtml(content)}</h${level}>`;
+                } else if (trimmed.startsWith('- ')) {
+                    html += `<li>${escapeHtml(trimmed.substring(2))}</li>`;
+                } else if (trimmed.startsWith('* ')) {
+                    html += `<li>${escapeHtml(trimmed.substring(2))}</li>`;
+                } else if (trimmed.startsWith('1. ') || trimmed.match(/^\d+\.\s/)) {
+                    html += `<li>${escapeHtml(trimmed.replace(/^\d+\.\s/, ''))}</li>`;
+                } else if (trimmed.startsWith('```')) {
+                    const lang = trimmed.substring(3);
+                    let code = '';
+                    let j = lines.indexOf(line) + 1;
+                    while (j < lines.length && !lines[j].trim().startsWith('```')) {
+                        code += lines[j] + '\n';
+                        j++;
+                    }
+                    html += `<pre><code class="language-${escapeHtml(lang)}">${escapeHtml(code.trim())}</code></pre>`;
+                } else if (trimmed) {
+                    html += `<p>${escapeHtml(trimmed)}</p>`;
+                }
+            }
+            
+            return html;
+        }
+        
+        document.getElementById('question').focus();
+    </script>
+</body>
+</html>

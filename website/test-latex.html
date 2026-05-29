@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LaTeX Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body style="background: #0a0a0a; color: white; padding: 2rem; font-family: Arial;">
+    <h1>LaTeX Rendering Test</h1>
+    
+    <h2>Block Math:</h2>
+    <p>$$R = k_1 \\cdot \\frac{\\lambda}{NA}$$</p>
+    
+    <h2>Inline Math:</h2>
+    <p>The resolution $R$ depends on wavelength $\\lambda$.</p>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== "undefined") {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ],
+                    throwOnError: false
+                });
+                console.log("KaTeX rendering completed");
+            } else {
+                console.log("renderMathInElement not available");
+            }
+        });
+    </script>
+</body>
+</html>

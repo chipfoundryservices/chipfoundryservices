@@ -1,0 +1,27 @@
+# Logs
+*.log
+donation_requests.log
+
+# Backups
+*.backup
+*.backup.*
+*.bak
+api.php.backup*
+
+# Debug/temp files
+*debug*
+*_old*
+*_temp*
+
+# Vendor (install via composer on server)
+website/vendor/
+website/node_modules/
+
+# Large binary/media
+website/content/
+website/blog/
+
+# Sensitive
+*.pem
+.env
+.env.*

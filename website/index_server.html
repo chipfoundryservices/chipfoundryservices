@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMFNV825YC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CMFNV825YC');
+    </script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #202124;
+            --text: #e8eaed;
+            --muted: #9aa0a6;
+            --pill: #303134;
+            --pill-border: #5f6368;
+            --btn-bg: #303134;
+            --btn-border: #3c4043;
+            --accent: #10a37f;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--text); text-decoration: none; font-size: 0.9rem; }
+        a:hover { text-decoration: underline; }
+
+        /* Top nav + center stage (Google-like) */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; font-size: 0.9rem; }
+        .nav-left, .nav-right { display: flex; gap: 18px; align-items: center; }
+        .stage { display: flex; align-items: center; justify-content: center; padding-top: 6vh; }
+        .center { text-align: center; width: 100%; padding: 0 16px; }
+        .logo { font-size: clamp(3rem, 10vw, 6rem); font-weight: 500; letter-spacing: -0.02em; margin: 10vh auto 24px; }
+        .logo span.primary { color: #8ab4f8; }
+        .search { max-width: 640px; margin: 0 auto; }
+        .search-bar { background: var(--pill); border: 1px solid transparent; border-radius: 24px; display: flex; align-items: center; padding: 8px 14px; gap: 12px; box-shadow: none; transition: border-color .15s, box-shadow .15s; }
+        .search-bar:hover { border-color: var(--pill-border); }
+        .search-bar:focus-within { border-color: var(--pill-border); box-shadow: 0 1px 6px rgba(0,0,0,.3); }
+        .icon { width: 20px; height: 20px; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; }
+        .query { flex: 1; background: transparent; border: 0; outline: none; color: var(--text); font-size: 1rem; }
+        .query::placeholder { color: var(--muted); }
+        .right-icons { display: flex; gap: 10px; }
+        .right-icons button { background: transparent; border: 0; color: var(--muted); cursor: pointer; padding: 6px; border-radius: 50%; }
+        .right-icons button:hover { background: rgba(255,255,255,0.06); }
+        .actions { margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .gbtn { background: var(--btn-bg); color: var(--text); border: 1px solid var(--btn-border); padding: 10px 16px; border-radius: 4px; font-size: 0.9rem; cursor: pointer; }
+        .gbtn:hover { border-color: #5f6368; }
+
+        /* Container for formatted results/messages */
+        .results { max-width: 800px; margin: 32px auto 0; padding: 0 16px 40px; }
+        .messages { flex: 1; overflow-y: visible; padding: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+        .message { display: flex; gap: 1rem; }
+        .message.assistant .content { color: #d1d5db; line-height: 1.8; }
+        .message.user .content { background: #2f2f2f; padding: 0.875rem 1.25rem; border-radius: 18px; color: #fff; align-self: center; }
+        .avatar { display:none; }
+    <meta property="og:title" content="AI Factory - Semiconductor & AI Knowledge Base">
+    <meta property="og:description" content="Free AI-powered Q&A for chip design, semiconductor manufacturing, and generative AI. 10,000+ expert definitions.">
+        .math-display {
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+            padding: 1rem;
+            background: #1a1a1a;
+            border-radius: 8px;
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        .katex { font-size: 1.1em; color: #fff; }
+        .katex-display { margin: 0; background: #1a1a1a; border-radius: 8px; padding: 1rem; overflow-x: auto; }
+        .message.assistant .content p { margin-bottom: 1rem; }
+        .message.assistant .content p:last-child { margin-bottom: 0; }
+        .message.assistant .content .section { margin-bottom: 1.25rem; }
+        .message.assistant .content .section-header { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; display: block; }
+            {
+        .message.assistant .content .step { display: flex; gap: 0.75rem; margin: 0.75rem 0; padding: 0.875rem 1rem; background: #151515; border-radius: 8px; border-left: 3px solid var(--accent); }
+        .message.assistant .content .step-num { color: var(--accent); font-weight: 700; flex-shrink: 0; min-width: 20px; }
+                "acceptedAnswer": {
+        .message.assistant .content .tech { color: var(--accent); }
+        .message.assistant .content .tip { margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #0d1a14, #151a1f); border-radius: 8px; border: 1px solid #1a3028; font-size: 0.9rem; }
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How do you train a Large Language Model (LLM)?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "LLM training involves pre-training on large text corpora using next-token prediction, followed by fine-tuning with instruction data and RLHF (Reinforcement Learning from Human Feedback) for alignment."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is EUV lithography?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "EUV (Extreme Ultraviolet) lithography uses 13.5nm wavelength light to print the smallest features on advanced chips. ASML is the sole manufacturer of EUV machines used by TSMC, Intel, and Samsung."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is a Transformer in machine learning?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Transformers are neural network architectures using self-attention mechanisms to process sequences. They power GPT, BERT, and modern LLMs, enabling parallel processing and capturing long-range dependencies."
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        /* Math formula styling */
+        .math-display {
+            display: block;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .katex { font-size: 1.1em; color: #fff; }
+        .katex-display { margin: 0; background: #1a1a1a; border-radius: 8px; padding: 1rem; overflow-x: auto; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        h1 { font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 300; letter-spacing: -0.02em; margin-bottom: 1rem; }
+        h1 strong { font-weight: 600; }
+        .subtitle { font-size: clamp(0.9rem, 2.5vw, 1.2rem); color: #666; max-width: 600px; line-height: 1.6; }
+        .stats { display: flex; gap: 2rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+        .stat { text-align: center; padding: 0.5rem 1rem; background: #151515; border-radius: 8px; border: 1px solid #222; }
+        .stat-num { color: #10a37f; font-size: 1.5rem; font-weight: 600; }
+        .stat-label { color: #666; font-size: 0.8rem; }
+        .chat-container { width: 100%; max-width: 800px; flex: 1; display: flex; flex-direction: column; }
+        .messages { flex: 1; overflow-y: auto; padding: 1rem 0; display: flex; flex-direction: column; gap: 1.5rem; }
+        .message { display: flex; gap: 1rem; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { flex-direction: row-reverse; }
+        .avatar { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 4px; }
+        .message.assistant .avatar { background: linear-gradient(135deg, #10a37f, #1a7f64); color: #fff; }
+        .message.user .avatar { background: #5436da; color: #fff; }
+        .content { max-width: 85%; }
+        .message.user .content { background: #2f2f2f; padding: 0.875rem 1.25rem; border-radius: 18px 18px 4px 18px; color: #fff; }
+        .message.assistant .content { color: #d1d5db; line-height: 1.8; }
+        .message.assistant .content p { margin-bottom: 1rem; }
+        .message.assistant .content p:last-child { margin-bottom: 0; }
+        .message.assistant .content .section { margin-bottom: 1.25rem; }
+        .message.assistant .content .section-header { color: #10a37f; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; display: block; }
+        .message.assistant .content .section-body { color: #d1d5db; }
+        .message.assistant .content .step { display: flex; gap: 0.75rem; margin: 0.75rem 0; padding: 0.875rem 1rem; background: #151515; border-radius: 8px; border-left: 3px solid #10a37f; }
+        .message.assistant .content .step-num { color: #10a37f; font-weight: 700; flex-shrink: 0; min-width: 20px; }
+        .message.assistant .content .hl { color: #fff; font-weight: 500; }
+        .message.assistant .content .tech { color: #10a37f; }
+        .message.assistant .content .tip { margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #0d1a14, #151a1f); border-radius: 8px; border: 1px solid #1a3028; font-size: 0.9rem; }
+        /* Professional formatting styles */
+        .message.assistant .content h2 { color: #10a37f; font-size: 1.3rem; font-weight: 600; margin: 1.5rem 0 0.75rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid #333; }
+        .message.assistant .content h3 { color: #fff; font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.5rem 0; }
+        .message.assistant .content h4 { color: #ccc; font-size: 1rem; font-weight: 500; margin: 1rem 0 0.4rem 0; }
+        .message.assistant .content ul { margin: 0.5rem 0 0.75rem 1.5rem; padding: 0; }
+        .message.assistant .content li { color: #d1d5db; margin: 0.3rem 0; line-height: 1.6; list-style-type: disc; }
+        .message.assistant .content li::marker { color: #d1d5db; }
+        .message.assistant .content .formula-block { background: #151515; padding: 1rem 1.25rem; border-radius: 8px; margin: 0.75rem 0; border-left: 3px solid #10a37f; font-family: 'SF Mono', Monaco, 'Courier New', monospace; }
+        /* Table styles */
+        .message.assistant .content table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: #151515; border-radius: 8px; overflow: hidden; }
+        .message.assistant .content th { background: #1a1a1a; color: #10a37f; padding: 0.75rem 1rem; text-align: left; font-weight: 600; border-bottom: 1px solid #333; }
+        .message.assistant .content td { padding: 0.6rem 1rem; color: #d1d5db; border-bottom: 1px solid #252525; }
+        .message.assistant .content tr:last-child td { border-bottom: none; }
+        .message.assistant .content tr:hover td { background: #1a1a1a; }
+        .message.assistant .content .comparison-table { border: 1px solid #333; }
+        .message.assistant .content .comparison-table th:first-child { min-width: 120px; }
+        .message.assistant .content .comparison-table td:first-child { color: #fff; font-weight: 500; }
+        /* ASCII diagram styles */
+        .message.assistant .content .ascii-diagram { background: #151515; padding: 1rem 1.25rem; border-radius: 8px; margin: 0.75rem 0; border: 1px solid #333; font-family: 'SF Mono', Monaco, 'Courier New', monospace; font-size: 0.85rem; line-height: 1.2; white-space: pre; overflow-x: auto; color: #d1d5db; }
+        /* Further Research section styles */
+        .message.assistant .content .further-research-divider { border: none; border-top: 2px dashed #444; margin: 1.5rem 0 0.5rem 0; }
+        .message.assistant .content .further-research-header { color: #10a37f; font-size: 1.1rem; font-weight: 600; margin: 0.5rem 0; text-align: center; }
+        .typing-indicator { display: flex; gap: 4px; padding: 0.5rem 0; }
+        .typing-indicator span { width: 8px; height: 8px; background: #555; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out; }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+        .welcome { display:none; }
+        
+        /* Topic categories for SEO */
+        .topics { display: none; }
+        
+        /* Footer */
+        footer { border-top: 1px solid #3c4043; color: var(--muted); font-size: 0.9rem; margin-top: 32px; }
+        .foot-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; flex-wrap: wrap; gap: 10px; }
+        .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+    <header class="top-nav">
+        <nav class="nav-left">
+            <a href="#">About</a>
+            <a href="#">Store</a>
+        </nav>
+        <nav class="nav-right">
+            <a href="/blog.php">Blog</a>
+            <a href="/glossary.php">Glossary</a>
+        </nav>
+    </header>
+
+    <div class="stage">
+        <main class="center" style="width:100%">
+            <div class="logo"><span class="primary">AI</span> Factory</div>
+            <div class="search">
+                <div class="search-bar">
+                    <span class="icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <input class="query" id="question" placeholder="Search semiconductor + AI knowledge" aria-label="Ask a question about semiconductors or AI" onkeypress="if(event.key==='Enter')ask()" />
+                    <div class="right-icons">
+                        <button title="Voice" aria-label="Voice">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0M12 19v3m-4 0h8"/></svg>
+                        </button>
+                        <button title="Image" aria-label="Image">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-4.5-4.5L11 16l-2-2-5 5"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="gbtn" onclick="ask()">Search</button>
+                    <button class="gbtn" onclick="ask()">I'm Feeling Lucky</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <section class="results">
+        <div class="messages" id="messages"></div>
+    </section>
+
+    <!-- Hidden SEO content - crawlable by search engines -->
+    <article class="topics" aria-hidden="true">
+        <h2>Semiconductor Manufacturing Topics</h2>
+        <section>
+            <h3>Lithography</h3>
+            <p>Photolithography, EUV lithography, DUV, immersion lithography, mask making, photoresist, exposure systems, optical proximity correction, multiple patterning.</p>
+        </section>
+        <section>
+            <h3>Wafer Fabrication</h3>
+            <p>Silicon wafer processing, oxidation, diffusion, ion implantation, chemical vapor deposition, physical vapor deposition, etching, CMP, metrology.</p>
+        </section>
+        <section>
+            <h3>Chip Design</h3>
+            <p>RTL design, synthesis, place and route, timing analysis, DRC, LVS, GDSII, standard cells, IP cores, FPGA, ASIC, SoC design.</p>
+        </section>
+        <section>
+            <h3>Advanced Packaging</h3>
+            <p>Chiplets, 2.5D packaging, 3D integration, TSV, HBM, interposers, hybrid bonding, fan-out wafer-level packaging.</p>
+        </section>
+        
+        <h2>Generative AI Topics</h2>
+        <section>
+            <h3>Large Language Models</h3>
+            <p>GPT, BERT, Transformer architecture, attention mechanism, tokenization, pre-training, fine-tuning, RLHF, instruction tuning, prompt engineering.</p>
+        </section>
+        <section>
+            <h3>Training Techniques</h3>
+            <p>Supervised learning, self-supervised learning, distributed training, mixed precision, gradient checkpointing, LoRA, QLoRA, model parallelism.</p>
+        </section>
+        <section>
+            <h3>Diffusion Models</h3>
+            <p>Stable Diffusion, DDPM, score matching, classifier-free guidance, ControlNet, image generation, video generation.</p>
+        </section>
+        <section>
+            <h3>AI Infrastructure</h3>
+            <p>GPU clusters, TPU, inference optimization, quantization, pruning, knowledge distillation, model serving, MLOps.</p>
+        </section>
+    </article>
+
+    <footer>
+        <div class="foot-row">
+            <div class="foot-links">
+                <a href="#">Advertising</a>
+                <a href="#">Business</a>
+                <a href="#">How Search works</a>
+            </div>
+            <div class="foot-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // No toggle/highlight needed with new search bar
+        
+        // Helper to render markdown tables
+        function renderTable(rows) {
+            if (rows.length === 0) return '';
+            let html = '<table class="comparison-table"><thead><tr>';
+            const headerCells = rows[0].split('|').filter(c => c.trim());
+            headerCells.forEach(cell => {
+                html += `<th>${cell.trim()}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].split('|').filter(c => c.trim());
+                html += '<tr>';
+                cells.forEach(cell => {
+                    html += `<td>${cell.trim()}</td>`;
+                });
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function formatResponse(text) {
+            if (!text) return '';
+            
+            // Pre-process: Combine $$ blocks that span multiple lines into single line
+            // Pattern: $$ on its own line, content, $$ on its own line -> $$content$$
+            text = text.replace(/\$\$\s*\n([^$]+?)\n\s*\$\$/g, (match, content) => {
+                return '$$' + content.trim().replace(/\n/g, ' ') + '$$';
+            });
+            
+            // Split into paragraphs by actual newlines
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            let inTable = false;
+            let tableRows = [];
+            
+            lines.forEach((line, index) => {
+                const trimmed = line.trim();
+                if (!trimmed) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (inTable && tableRows.length > 0) {
+                        html += renderTable(tableRows);
+                        tableRows = [];
+                        inTable = false;
+                    }
+                    return;
+                }
+                
+                // Check for markdown table row (starts with |)
+                if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+                    // Skip separator rows
+                    if (trimmed.match(/^\|[\s\-:]+\|$/)) {
+                        return;
+                    }
+                    inTable = true;
+                    tableRows.push(trimmed);
+                    return;
+                } else if (inTable && tableRows.length > 0) {
+                    html += renderTable(tableRows);
+                    tableRows = [];
+                    inTable = false;
+                }
+
+                // Escape HTML but PRESERVE $$ and $ delimiters for KaTeX
+                let escaped = trimmed.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                
+                // Check for generic multi-column table rows (e.g., "• Name: Col1 = Val | Col2 = Val | Col3 = Val")
+                const isGenericTableRow = trimmed.match(/^[•\-]\s*[A-Za-z][A-Za-z0-9\s\(\)₀-₉]+:\s*[A-Za-z]+\s*=.*\|.*=/) && !trimmed.match(/PVD\s*=|CVD\s*=/);
+                
+                if (isGenericTableRow) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    // Check if we need to start a new table (no open generic table)
+                    if (!html.includes('generic-table-open')) {
+                        // Extract column headers from the = labels
+                        let cleanLine = escaped.replace(/^[•\-]\s*/, '');
+                        let valuePart = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+                        let headerNames = valuePart.split('|').map(c => {
+                            let eqIdx = c.indexOf('=');
+                            return eqIdx > 0 ? c.substring(0, eqIdx).trim() : 'Value';
+                        });
+                        let tableHeader = '<table class="comparison-table generic-table-open"><thead><tr><th>Mode</th>' + headerNames.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>';
+                        html += tableHeader;
+                    }
+                    let cleanLine = escaped.replace(/^[•\-]\s*/, '');
+                    let colonIdx = cleanLine.indexOf(':');
+                    let rowName = colonIdx > 0 ? cleanLine.substring(0, colonIdx).trim() : '';
+                    let valuePart = colonIdx > 0 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine;
+                    let columns = valuePart.split('|').map(c => {
+                        let eqIdx = c.indexOf('=');
+                        return eqIdx > 0 ? c.substring(eqIdx + 1).trim() : c.trim();
+                    });
+                    html += `<tr><td>${rowName}</td>${columns.map(c => '<td>' + c + '</td>').join('')}</tr>`;
+                    return;
+                } else {
+                    // Close any open generic table when we hit non-table content
+                    if (html.includes('generic-table-open')) {
+                        html = html.replace('generic-table-open', 'comparison-table');
+                        html += '</tbody></table>';
+                    }
+                }
+                
+                // Check for variants table rows (e.g., "• DC Magnetron: description → Use: value")
+                const isVariantsRow = trimmed.match(/^[•\-]\s*[A-Za-z][A-Za-z\s\(\)]+:.*→\s*Use:/i) || 
+                                      trimmed.match(/^[•\-]\s*[A-Za-z][A-Za-z\s\(\)]+:.*\u2192\s*Use:/i);
+                
+                // Check for parameters table rows (e.g., "• Chamber pressure: 1-10 mTorr → Lower = more directional")
+                const isParametersRow = trimmed.match(/^[•\-]\s*[A-Za-z][A-Za-z\s\(\)]+:\s*[\d\w\-\.]+.*[→\u2192]/) && 
+                                        !trimmed.match(/→\s*Use:/i) && !trimmed.match(/\u2192\s*Use:/i);
+                
+                if (isVariantsRow) {
+                    // Close any open list or diagram
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (html.includes('ascii-diagram-building')) {
+                        html = html.replace('ascii-diagram-building', 'ascii-diagram-content');
+                        html += '</div>';
+                    }
+                    // Add variants table marker if not present
+                    if (!html.includes('variants-table-marker')) {
+                        html += '<div class="variants-table-marker"></div>';
+                    }
+                    // Parse: "Type: Description → Use: value"
+                    let cleanLine = escaped.replace(/^[•\-]\s*/, '');
+                    // Split by → or →
+                    let mainParts = cleanLine.split(/→|&rarr;|\u2192/);
+                    let typePart = mainParts[0].trim();
+                    let usePart = mainParts[1] ? mainParts[1].trim() : '';
+                    
+                    // Split type part by first colon
+                    let colonIdx = typePart.indexOf(':');
+                    let typeName = colonIdx > 0 ? typePart.substring(0, colonIdx).trim() : typePart;
+                    let description = colonIdx > 0 ? typePart.substring(colonIdx + 1).trim() : '';
+                    
+                    // Extract use case
+                    let useCase = usePart.replace(/^Use:\s*/i, '').trim();
+                    
+                    html += `<tr data-variants><td>${typeName}</td><td>${description}</td><td>${useCase}</td></tr>`;
+                    return;
+                }
+                
+                if (isParametersRow) {
+                    // Close any open list or diagram
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (html.includes('ascii-diagram-building')) {
+                        html = html.replace('ascii-diagram-building', 'ascii-diagram-content');
+                        html += '</div>';
+                    }
+                    // Add parameters table marker if not present
+                    if (!html.includes('parameters-table-marker')) {
+                        html += '<div class="parameters-table-marker"></div>';
+                    }
+                    // Parse: "Parameter: value → Effect"
+                    let cleanLine = escaped.replace(/^[•\-]\s*/, '');
+                    // Split by → 
+                    let mainParts = cleanLine.split(/→|\u2192/);
+                    let paramPart = mainParts[0].trim();
+                    let effect = mainParts[1] ? mainParts[1].trim() : '';
+                    
+                    // Split param part by first colon
+                    let colonIdx = paramPart.indexOf(':');
+                    let paramName = colonIdx > 0 ? paramPart.substring(0, colonIdx).trim() : paramPart;
+                    let typicalRange = colonIdx > 0 ? paramPart.substring(colonIdx + 1).trim() : '';
+                    
+                    html += `<tr data-parameters><td>${paramName}</td><td>${typicalRange}</td><td>${effect}</td></tr>`;
+                    return;
+                }
+                
+                // Check for ASCII diagram lines (box-drawing characters only, NOT arrows used in text)
+                const isAsciiDiagram = trimmed.match(/[┌┐└┘├┤┬┴┼─│╭╮╰╯┏┓┗┛┣┫┳┻╋━┃]/) && !trimmed.match(/^[•\-]\s/);
+                
+                if (isAsciiDiagram) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    // Add to diagram block - preserve original spacing
+                    if (!html.includes('ascii-diagram-building')) {
+                        html += '<div class="ascii-diagram ascii-diagram-building">';
+                    }
+                    // Use original line to preserve spacing
+                    let originalEscaped = lines[index].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    html += originalEscaped + '\n';
+                    return;
+                } else {
+                    // Close any open diagram
+                    if (html.includes('ascii-diagram-building')) {
+                        html = html.replace('ascii-diagram-building', 'ascii-diagram-content');
+                        html += '</div>';
+                    }
+                }
+                
+                // Check for comparison table rows (e.g., "• Step coverage: PVD = Poor | CVD = Good" or with ALD)
+                const isComparisonRow = trimmed.match(/^[•\-]?\s*[A-Za-z][A-Za-z\s\(\)]+:\s*PVD\s*=.*\|.*CVD\s*=/);
+                const has3Way = trimmed.match(/\|\s*ALD\s*=/);
+                
+                if (isComparisonRow) {
+                    // Close any open list
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    // Use different markers for 2-way and 3-way comparisons
+                    let markerClass = has3Way ? 'comparison3-table-marker' : 'comparison-table-marker';
+                    if (!html.includes(markerClass)) {
+                        html += `<div class="${markerClass}"></div>`;
+                    }
+                    // Parse: "Aspect: PVD = value | CVD = value | ALD = value"
+                    let cleanLine = escaped.replace(/^[•\-]\s*/, '');
+                    let parts = cleanLine.split(':');
+                    let aspect = parts[0].trim();
+                    let values = parts.slice(1).join(':').split('|');
+                    let pvdVal = '', cvdVal = '', aldVal = '';
+                    values.forEach(v => {
+                        v = v.trim();
+                        if (v.startsWith('PVD')) pvdVal = v.replace(/^PVD\s*=\s*/, '');
+                        else if (v.startsWith('CVD')) cvdVal = v.replace(/^CVD\s*=\s*/, '');
+                        else if (v.startsWith('ALD')) aldVal = v.replace(/^ALD\s*=\s*/, '');
+                    });
+                    let dataAttr = has3Way ? 'data-comparison3' : 'data-comparison';
+                    html += `<tr ${dataAttr}><td>${aspect}</td><td>${pvdVal}</td><td>${cvdVal}</td>${aldVal ? '<td>' + aldVal + '</td>' : ''}</tr>`;
+                    return;
+                }
+                
+                // Check for bullet points
+                const isBullet = trimmed.startsWith('• ') || trimmed.startsWith('- ') || trimmed.match(/^\d+\)\s/);
+                
+                if (isBullet) {
+                    if (!inList) {
+                        html += '<ul>';
+                        inList = true;
+                    }
+                    let bulletText = escaped.replace(/^[•\-]\s*/, '').replace(/^\d+\)\s*/, '');
+                    html += `<li>${bulletText}</li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    
+                    // Main section headers (all caps or title case with colon)
+                    if (trimmed.match(/^(Overview|Historical Context|Core Components|Core Mechanism|Key|Two Main Categories|Architectural Variants|Why Transformers|Computational Considerations|Impact and Applications|Current Frontiers|The Transformer|The Problem|Fundamental Concept|Equipment|Process Control|Special Etch|Atomic Layer|Critical Performance|Major Etch|Etch Chemistry|The Etch Mechanism)/)) {
+                        html += `<h2>${escaped}</h2>`;
+                    }
+                    // Numbered sections like "1. Self-Attention"
+                    else if (trimmed.match(/^\d+\.\s+[A-Z]/)) {
+                        html += `<h3>${escaped}</h3>`;
+                    }
+                    // Sub-section headers like "a) Physical Etching"
+                    else if (trimmed.match(/^[a-z]\)\s+[A-Z]/)) {
+                        html += `<h4>${escaped}</h4>`;
+                    }
+                    // Sub-section headers like "1.1 Types"
+                    else if (trimmed.match(/^\d+\.\d+\s+[A-Z]/)) {
+                        html += `<h4>${escaped}</h4>`;
+                    }
+                    // Further Research section with dash lines (check BEFORE headers ending with colon)
+                    else if (trimmed.match(/^Further Research:?$/i)) {
+                        html += `<div class="further-research-divider"></div><h3 class="further-research-header">Further Research</h3><div class="further-research-divider"></div>`;
+                    }
+                    // Headers ending with colon
+                    else if (trimmed.match(/^[A-Z][A-Za-z\s\(\)\-\/]+:$/) && trimmed.length < 60) {
+                        html += `<h4>${escaped}</h4>`;
+                    }
+                    // Formula lines - detect mathematical equations
+                    else if (trimmed.match(/^(Attention|MultiHead|FFN|PE)\(/) || 
+                             trimmed.match(/^A\s*=\s*1\s*-/) ||
+                             trimmed.match(/^[σρεγλαβ²]/) ||
+                             trimmed.match(/^(σ²|ρ\(|Y\s*=|E_|P_|G_|OVL|EPE|Cpk|Sᵢ|N\s*~)/i) ||
+                             trimmed.match(/^[A-Za-z_]+\s*[=≈→]\s*[Σ∫Π√]/) ||
+                             trimmed.match(/Σᵢ|∂f\/∂|cov\(|exp\(|√\[/)) {
+                        html += `<div class="formula-block">${escaped}</div>`;
+                    }
+                    // Regular paragraph
+                    else {
+                        html += `<p style="color:#d1d5db;margin:0.5rem 0;line-height:1.7;">${escaped}</p>`;
+                    }
+                }
+            });
+            
+            if (inList) {
+                html += '</ul>';
+            }
+            
+            // Close any open ASCII diagram
+            if (html.includes('ascii-diagram-building')) {
+                html = html.replace('ascii-diagram-building', 'ascii-diagram-content');
+                html += '</div>';
+            }
+            
+            // Close any remaining open generic table at the end
+            if (html.includes('generic-table-open')) {
+                html = html.replace('generic-table-open', 'comparison-table');
+                html += '</tbody></table>';
+            }
+            
+            // Post-process: Wrap variants table rows
+            if (html.includes('data-variants')) {
+                let tableHeader = '<table class="comparison-table"><thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead><tbody>';
+                let tableFooter = '</tbody></table>';
+                html = html.replace('<div class="variants-table-marker"></div>', tableHeader);
+                html = html.replace(/<tr data-variants>/g, '<tr>');
+                // Insert footer after last variants row
+                let parts = html.split(tableHeader);
+                if (parts.length > 1) {
+                    let afterHeader = parts[1];
+                    // Find where table rows end (last </tr> before non-row content)
+                    let lastTrIdx = -1;
+                    let searchIdx = 0;
+                    while (true) {
+                        let nextTr = afterHeader.indexOf('</tr>', searchIdx);
+                        if (nextTr === -1) break;
+                        let afterTr = afterHeader.substring(nextTr + 5).trim();
+                        if (!afterTr.startsWith('<tr>')) {
+                            lastTrIdx = nextTr;
+                            break;
+                        }
+                        searchIdx = nextTr + 5;
+                        lastTrIdx = nextTr;
+                    }
+                    if (lastTrIdx !== -1) {
+                        afterHeader = afterHeader.substring(0, lastTrIdx + 5) + tableFooter + afterHeader.substring(lastTrIdx + 5);
+                        html = parts[0] + tableHeader + afterHeader;
+                    }
+                }
+            }
+            
+            // Post-process: Wrap parameters table rows
+            if (html.includes('data-parameters')) {
+                let tableHeader = '<table class="comparison-table"><thead><tr><th>Parameter</th><th>Typical Range</th><th>Effect</th></tr></thead><tbody>';
+                let tableFooter = '</tbody></table>';
+                html = html.replace('<div class="parameters-table-marker"></div>', tableHeader);
+                html = html.replace(/<tr data-parameters>/g, '<tr>');
+                // Insert footer after last parameters row
+                let parts = html.split(tableHeader);
+                if (parts.length > 1) {
+                    let afterHeader = parts[1];
+                    let lastTrIdx = -1;
+                    let searchIdx = 0;
+                    while (true) {
+                        let nextTr = afterHeader.indexOf('</tr>', searchIdx);
+                        if (nextTr === -1) break;
+                        let afterTr = afterHeader.substring(nextTr + 5).trim();
+                        if (!afterTr.startsWith('<tr>')) {
+                            lastTrIdx = nextTr;
+                            break;
+                        }
+                        searchIdx = nextTr + 5;
+                        lastTrIdx = nextTr;
+                    }
+                    if (lastTrIdx !== -1) {
+                        afterHeader = afterHeader.substring(0, lastTrIdx + 5) + tableFooter + afterHeader.substring(lastTrIdx + 5);
+                        html = parts[0] + tableHeader + afterHeader;
+                    }
+                }
+            }
+            
+            // Post-process: Wrap comparison table rows (2-way: PVD vs CVD)
+            if (html.includes('data-comparison>')) {
+                let tableRows = html.match(/<tr data-comparison>.*?<\/tr>/g);
+                if (tableRows && tableRows.length > 0) {
+                    let tableHeader = '<table class="comparison-table"><thead><tr><th>Aspect</th><th>PVD</th><th>CVD</th></tr></thead><tbody>';
+                    let tableFooter = '</tbody></table>';
+                    html = html.replace('<div class="comparison-table-marker"></div>', tableHeader);
+                    html = html.replace(/<tr data-comparison>/g, '<tr>');
+                    // Insert footer after last comparison row
+                    let parts = html.split(tableHeader);
+                    if (parts.length > 1) {
+                        let afterHeader = parts[1];
+                        let lastTrIdx = -1;
+                        let searchIdx = 0;
+                        while (true) {
+                            let nextTr = afterHeader.indexOf('</tr>', searchIdx);
+                            if (nextTr === -1) break;
+                            let afterTr = afterHeader.substring(nextTr + 5).trim();
+                            if (!afterTr.startsWith('<tr>')) {
+                                lastTrIdx = nextTr;
+                                break;
+                            }
+                            searchIdx = nextTr + 5;
+                            lastTrIdx = nextTr;
+                        }
+                        if (lastTrIdx !== -1) {
+                            afterHeader = afterHeader.substring(0, lastTrIdx + 5) + tableFooter + afterHeader.substring(lastTrIdx + 5);
+                            html = parts[0] + tableHeader + afterHeader;
+                        }
+                    }
+                }
+            }
+            
+            // Post-process: Wrap 3-way comparison table rows (PVD vs CVD vs ALD)
+            if (html.includes('data-comparison3')) {
+                let tableRows = html.match(/<tr data-comparison3>.*?<\/tr>/g);
+                if (tableRows && tableRows.length > 0) {
+                    let tableHeader = '<table class="comparison-table"><thead><tr><th>Aspect</th><th>PVD</th><th>CVD</th><th>ALD</th></tr></thead><tbody>';
+                    let tableFooter = '</tbody></table>';
+                    html = html.replace('<div class="comparison3-table-marker"></div>', tableHeader);
+                    html = html.replace(/<tr data-comparison3>/g, '<tr>');
+                    // Insert footer after last comparison3 row
+                    let parts = html.split(tableHeader);
+                    if (parts.length > 1) {
+                        let afterHeader = parts[1];
+                        let lastTrIdx = -1;
+                        let searchIdx = 0;
+                        while (true) {
+                            let nextTr = afterHeader.indexOf('</tr>', searchIdx);
+                            if (nextTr === -1) break;
+                            let afterTr = afterHeader.substring(nextTr + 5).trim();
+                            if (!afterTr.startsWith('<tr>')) {
+                                lastTrIdx = nextTr;
+                                break;
+                            }
+                            searchIdx = nextTr + 5;
+                            lastTrIdx = nextTr;
+                        }
+                        if (lastTrIdx !== -1) {
+                            afterHeader = afterHeader.substring(0, lastTrIdx + 5) + tableFooter + afterHeader.substring(lastTrIdx + 5);
+                            html = parts[0] + tableHeader + afterHeader;
+                        }
+                    }
+                }
+            }
+            
+            return html;
+        }
+        
+        function renderMath() {
+            if (typeof katex !== 'undefined') {
+                // Find all math-display spans and render them
+                document.querySelectorAll('.math-display').forEach(el => {
+                    // Get the raw LaTeX (remove any $$ if present)
+                    let tex = el.textContent.trim();
+                    tex = tex.replace(/^\$\$/, '').replace(/\$\$$/, '').trim();
+                    
+                    if (tex) {
+                        try {
+                            katex.render(tex, el, {
+                                displayMode: true,
+                                throwOnError: false,
+                                output: 'html'
+                            });
+                        } catch (e) {
+                            console.log('KaTeX error:', e, 'for:', tex);
+                        }
+                    }
+                });
+            }
+        }
+
+        function highlight(text) {
+            // No highlighting - just return escaped text
+            if (!text) return '';
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function addMessage(role, content, isTyping = false) {
+            // ensure results container exists; no welcome section in minimal layout
+            
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            
+            const avatar = role === 'assistant' ? '✦' : '';
+            
+            if (isTyping) {
+                div.innerHTML = `<div class="avatar">${avatar}</div><div class="content"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+                div.id = 'typing';
+            } else if (role === 'user') {
+                const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                div.innerHTML = `<div class="content">${escaped}</div>`;
+            } else {
+                div.innerHTML = `<div class="avatar">${avatar}</div><div class="content">${formatResponse(content)}</div>`;
+            }
+            
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            
+            // Render math (auto-render across content so $$ and $ are supported)
+            if (typeof renderMathInElement !== 'undefined') {
+                setTimeout(() => {
+                    try {
+                        renderMathInElement(div, {
+                            delimiters: [
+                                {left: '$$', right: '$$', display: true},
+                                {left: '$', right: '$', display: false},
+                                {left: '\\(', right: '\\)', display: false},
+                                {left: '\\[', right: '\\]', display: true}
+                            ],
+                            throwOnError: false
+                        });
+                    } catch (e) {
+                        console.log('KaTeX auto-render error', e);
+                    }
+                }, 50);
+            } else {
+                // Fallback to explicit renderer for .math-display spans
+                setTimeout(renderMath, 100);
+            }
+        }
+
+        async function ask() {
+            const input = document.getElementById('question');
+            const q = input.value.trim();
+            if (!q) return;
+            
+            addMessage('user', q);
+            input.blur();
+            
+            addMessage('assistant', '', true);
+            
+            try {
+                const res = await fetch('/api.php?q=' + encodeURIComponent(q));
+                const data = await res.json();
+                
+                document.getElementById('typing')?.remove();
+                addMessage('assistant', data.response);
+            } catch (err) {
+                document.getElementById('typing')?.remove();
+                addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
