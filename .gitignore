@@ -25,3 +25,20 @@ website/blog/
 *.pem
 .env
 .env.*
+
+# Large media files
+*.mp4
+*.mp3
+*.wav
+*.zip
+*.tar.gz
+
+# Backup HTML files
+*backup*.html
+*.html.bak
+*.bak
+
+# Old/duplicate index files
+index_*.html
+index_server.html
+index_seo.html
