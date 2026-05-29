@@ -21,21 +21,23 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -rltz --delete \
+          rsync -rltz \
             --no-perms --no-owner --no-group \
             --exclude '.git/' \
             --exclude '.github/' \
             --exclude '*.md' \
-            --exclude 'node_modules/' \
             --exclude '*.log' \
+            --exclude 'node_modules/' \
+            --exclude 'vendor/' \
+            --exclude 'content/' \
+            --exclude 'blog/' \
+            --exclude 'new/' \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./website/ \
             ${{ secrets.CFS_USER }}@${{ secrets.CFS_HOST }}:${{ secrets.CFS_WEBROOT }}/
-          # exit 23 = permission attrs only, files transferred OK
-          RC=$?; [ $RC -eq 0 ] || [ $RC -eq 23 ] || exit $RC
 
       - name: Verify deployment
         run: |
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
             ${{ secrets.CFS_USER }}@${{ secrets.CFS_HOST }} \
-            "echo 'Deploy OK at \$(date)' && ls -lt ${{ secrets.CFS_WEBROOT }}/ | head -5"
+            "echo 'Deploy OK at \$(date)' && ls -lt ${{ secrets.CFS_WEBROOT }}/*.php | head -5"
