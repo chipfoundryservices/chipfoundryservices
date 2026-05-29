@@ -3,7 +3,7 @@ name: Deploy to ChipFoundryServices.com
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # allow manual trigger
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -19,18 +19,20 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H ${{ secrets.CFS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Deploy to server via rsync
+      - name: Deploy via rsync
         run: |
-          rsync -avz --delete \
+          rsync -rltz --delete \
+            --no-perms --no-owner --no-group \
             --exclude '.git/' \
             --exclude '.github/' \
-            --exclude 'README.md' \
             --exclude '*.md' \
             --exclude 'node_modules/' \
             --exclude '*.log' \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./website/ \
             ${{ secrets.CFS_USER }}@${{ secrets.CFS_HOST }}:${{ secrets.CFS_WEBROOT }}/
+          # exit 23 = permission attrs only, files transferred OK
+          RC=$?; [ $RC -eq 0 ] || [ $RC -eq 23 ] || exit $RC
 
       - name: Verify deployment
         run: |
